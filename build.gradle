@@ -73,7 +73,9 @@ configure(allprojects) { project ->
 		 maven {
 	        url "http://maven.aliyun.com/nexus/content/groups/public"
 	    }
-		
+		 maven {
+	        url "https://artifacts.elastic.co/maven"
+	    } 
 		mavenCentral()
 
 	}
@@ -126,8 +128,7 @@ configure(allprojects) { project ->
 
 
 
-	task copyJarFiles(type: Sync,dependsOn:'jar'){
-		from fileTree(dir: 'lib', include: '**/*.jar')
+	task copyJarFiles(type: Sync,dependsOn:'jar'){		
 		from configurations.compile
 		from jar.outputs
 		exclude { details -> details.file.name.startsWith('bboss-rt')  }
@@ -136,17 +137,22 @@ configure(allprojects) { project ->
 	}
 
 	task copyRTJarFiles(type: Copy,dependsOn:'copyJarFiles'){
-		from configurations.runtime - configurations.compile
-		into 'build/dist'
+		
+		 from configurations.runtime - configurations.compile
+		 into 'build/dist'
+	     rename ("bboss-rt-${bboss_version}.jar", "${project.name}-${bboss_version}.jar")
 	}
 	task copyToolFiles(type: Copy ,dependsOn:'copyRTJarFiles')  {
+		
 		from ('runfiles')
-				{
-					expand(
-							bboss_version:"${bboss_version}"
-					)
+			{
+				expand(
+						bboss_version:"${bboss_version}",
+                        project:"${project.name}",
+                        vm:"-Xms512m -Xmx512m -Xmn256m -XX:PermSize=128M -XX:MaxPermSize=128M"
+						)
 
-				}
+			}		
 		filteringCharset = 'UTF-8'
 		into 'build/dist/'
 

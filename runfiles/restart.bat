@@ -1,0 +1,1 @@
+java ${vm} -jar ${project}-${bboss_version}.jar restart
