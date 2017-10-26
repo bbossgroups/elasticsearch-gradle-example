@@ -1,0 +1,343 @@
+<!--es
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-term-query.html
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-query.html
+-->
+<properties>
+    <property name="queryTracesByCriteria">
+        <![CDATA[{
+
+            "sort": [
+                {"startTime": "desc"},
+                {"_uid": "desc"}
+            ],
+            "_source": [ "startTime", "elapsed","err" ],
+            #if($lastStartTime && $lastStartTime > 0)
+                "search_after": [$lastStartTime,"trace#$lastId"],
+            #end
+            "size":10000,
+            "query": {
+                "bool": {
+                    "filter": {
+                        "term": {
+                            "applicationName": "$application"
+                        }
+                    },
+                    "must": {
+                        "range": {
+                            "startTime": {
+                                "gte": $startTime,
+                                "lt": $endTime
+                            }
+                        }
+                    }
+                }
+            }
+        }]]>
+    </property>
+    <!--
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
+    select rpc, avg(elapsed) avg_elapsed, count(1) count from traces where start_time >= #{startTime} and start_time <= #{endTime} GROUP by rpc order by avg_elapsed desc
+    -->
+
+
+    <property name="queryServiceTracesAvgElapsed">
+        <![CDATA[
+        {
+            "query": {
+                "bool": {
+                    "filter": {
+                        "term": {
+                            "applicationName": "$application"
+                        }
+                    },
+                    "must": {
+                        "range": {
+                            "startTime": {
+                                "gte": $startTime,
+                                "lt": $endTime
+                            }
+                        }
+                    }
+                }
+            },
+            "size":0,
+              "aggs": {
+                "traces": {
+                  "terms": {
+                    "field": "rpc.keyword",
+                    "size":100,
+                    "order": {"elapsed_stats.avg": "desc"}
+                  },
+                  "aggs":{
+                    "elapsed_stats":{
+                      "stats":{
+                        "field":"elapsed"
+                      }
+                    },
+                    "success_stats": {
+                      "terms": { "field": "err" }
+                    }
+                  }
+                }
+              }
+        }
+        ]]>
+    </property>
+
+    <!--
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html
+    {
+    "aggregations": {
+        "elapsed_ranges" : {
+            "buckets": [
+                {
+                    "to": 50,
+                    "doc_count": 2,
+                    "elapsed_stats": {
+                        "count": 2,
+                        "min": 20,
+                        "max": 47,
+                        "avg": 33.5,
+                        "sum": 67
+                    }
+                },
+                {
+                    "from": 50,
+                    "to": 100,
+                    "doc_count": 4,
+                    "elapsed_stats": {
+                        "count": 4,
+                        "min": 60,
+                        "max": 98,
+                        "avg": 82.5,
+                        "sum": 330
+                    }
+                },
+                {
+                    "from": 100,
+                    "doc_count": 4,
+                    "elapsed_stats": {
+                        "count": 4,
+                        "min": 134,
+                        "max": 367,
+                        "avg": 216,
+                        "sum": 864
+                    }
+                }
+            ]
+        }
+    }
+   }
+
+    -->
+    <property name="queryPeriodsTopN">
+        <![CDATA[
+        {
+            "query": {
+                "bool": {
+                    "filter": {
+                        "term": {
+                            "applicationName": "$application"
+                        }
+                    },
+                    "must": {
+                        "range": {
+                            "startTime": {
+                                "gte": $startTime,
+                                "lt": $endTime
+                            }
+                        }
+                    }
+                }
+            },
+            "size": 0,
+            "aggs" : {
+                "elapsed_ranges" : {
+                    "range" : {
+                        "field" : "elapsed",
+                        "keyed" : true,
+                        "ranges" : [
+                            { "key" : "1秒", "to" : 1000 },
+                            { "key" : "3秒", "from" : 1000, "to" : 3000 },
+                            { "key" : "5秒", "from" : 3000, "to" : 5000 },
+                            { "key" : "5秒以上", "from" : 5000 }
+                        ]
+                    },
+                    "aggs" : {
+                        "elapsed_stats" : {
+                            "stats" : { "field" : "elapsed"}
+                        }
+                    }
+                }
+            }
+
+        }
+        ]]>
+    </property>
+    <!--
+        分页查询和按日期分钟统计片段
+        应用：链路检索和统计查询，rpc时间段统计查询
+    -->
+    <property name="searchAfterAggs">
+        <![CDATA[
+            #if($lastStartTime && $lastStartTime > 0)
+                #if($orderBy && $orderBy.equals("elapsed"))
+                "search_after": [$lastElapsed,$lastStartTime,"trace#$lastId"],
+                #else
+                "search_after": [$lastStartTime,"trace#$lastId"],
+                #end
+            #end
+            "size": $pageSize,
+            "sort": [
+                 #if($orderBy && $orderBy.equals("elapsed")){"elapsed": "desc"},#end
+                {"startTime": "desc"},
+                {"_uid": "desc"}
+            ],
+            "aggs": {
+                "traces_date_histogram": {
+                    "date_histogram": {
+                        "field": "starttimeDate",
+                        "interval": "1m",
+                        "time_zone": "Asia/Shanghai",
+                        "min_doc_count": 0
+                    }
+                }
+            },]]>
+    </property>
+    <!--
+    查询条件
+    -->
+    <property name="qcondition">
+        <![CDATA[
+        "bool": {
+            "filter": [
+                #if($application && !$application.equals("_all"))
+                {"term": {
+                    "applicationName": "$application"
+                }}
+                #end
+                #if($queryStatus.equals("success"))
+                  #if($application && !$application.equals("_all")),#end
+                  {"term": {
+
+                       "err": 0
+                  }}
+                #elseif($queryStatus.equals("error"))
+                  #if($application && !$application.equals("_all")),#end
+                  {"term": {
+
+                       "err": 1
+                  }}
+                #end
+            ],
+            "must": [
+                #if($queryCondition && !$queryCondition.equals(""))
+                {
+                    "query_string": {
+                        "query": "$queryCondition",
+                        "analyze_wildcard": true,
+                        "all_fields": true
+                    }
+                },
+                #end
+                {
+                    "range": {
+                        "startTime": {
+                            "gte": $startTime,
+                            "lt": $endTime,
+                            "format": "epoch_millis"
+                        }
+                    }
+                }
+            ]
+        }]]>
+    </property>
+
+
+
+    <property name="queryServiceByCondition">
+        <![CDATA[{
+            "version": true,
+            @{searchAfterAggs}
+            "query": {
+                @{qcondition}
+            },
+            "_source": {
+                "excludes": []
+            },
+
+            "highlight": {
+                "pre_tags": [
+                    "<mark>"
+                ],
+                "post_tags": [
+                    "</mark>"
+                ],
+                "fields": {
+                    "*": {
+                        "highlight_query": {
+                            @{qcondition}
+                        }
+                    }
+                },
+                "fragment_size": 2147483647
+            }
+        }]]></property>
+
+    <property name="queryServiceDetailByRpc">
+        <![CDATA[{
+            @{searchAfterAggs}
+            "query": {
+                "bool": {
+                    "filter": [
+                        {"term": {
+                            "applicationName": "$application"
+
+                        }},
+                        {"term": {
+
+                             "rpc.keyword": "$rpc"
+                        }}
+                    ],
+                    "must": {
+                        "range": {
+                            "startTime": {
+                                "gte": $startTime,
+                                "lt": $endTime
+                            }
+                        }
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+    <property name="querySlowTraceTopN">
+        <![CDATA[{
+            "version": true,
+            "size": #[topN],
+            "sort": [
+                {"elapsed": "desc"}
+            ],
+            "query": {
+                "bool": {
+                    "filter": [
+                        {"term": {
+                            "applicationName": #[application]
+
+                        }}
+                    ],
+                    "must": {
+                        "range": {
+                            "startTime": {
+                                "gte": #[startTime],
+                                "lt": #[endTime]
+                            }
+                        }
+                    }
+                }
+            }
+        }]]></property>
+
+
+</properties>
