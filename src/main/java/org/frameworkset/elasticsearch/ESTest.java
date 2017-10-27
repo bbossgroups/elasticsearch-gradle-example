@@ -1,20 +1,16 @@
 package org.frameworkset.elasticsearch;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
 import org.frameworkset.spi.DefaultApplicationContext;
 import org.frameworkset.spi.remote.http.MapResponseHandler;
 import org.frameworkset.spi.remote.http.StringResponseHandler;
 import org.frameworkset.util.FastDateFormat;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
  
 
 public class ESTest {
@@ -86,7 +82,8 @@ public class ESTest {
 	}
  
 	public void testConfig() throws ParseException{
-		
+//		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("traceElasticSearch",//可以指定elasticSearch服务器
+//				"esmapper/estrace/ESTracesMapper.xml");
 		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
 		TraceExtraCriteria traceExtraCriteria = new TraceExtraCriteria();
 		traceExtraCriteria.setApplication("testweb1");

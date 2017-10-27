@@ -3,7 +3,7 @@
 	<property name="elasticsearchPropes">
 		<propes>
 
-			<property name="elasticsearch.client" value="${elasticsearch.client}">
+			<property name="elasticsearch.client" value="${elasticsearch.client:restful}">
 				<description> <![CDATA[ 客户端类型:transport，restful ]]></description>
 			</property>
 
@@ -57,10 +57,76 @@
 			
 		</propes>
 	</property>
+	<!--默认的elasticsearch-->
 	<property name="elasticSearch"
 			  class="org.frameworkset.elasticsearch.ElasticSearch"
 			  init-method="configure"
 			  destroy-method="stop"
 			  f:elasticsearchPropes="attr:elasticsearchPropes"/>
+    <!--
+    其他elasticSearch组件，对应另外一个elasticsearch服务器
+    -->
+	<property name="traceElasticsearchPropes">
+		<propes>
+
+			<property name="elasticsearch.client" value="${trace.elasticsearch.client:restful}">
+				<description> <![CDATA[ 客户端类型:transport，restful ]]></description>
+			</property>
+
+			<property name="elasticUser" value="${trace.elasticUser:}">
+				<description> <![CDATA[ 认证用户 ]]></description>
+			</property>
+
+			<property name="elasticPassword" value="${trace.elasticPassword:}">
+				<description> <![CDATA[ 认证口令 ]]></description>
+			</property>
+			<!--<property name="elasticsearch.hostNames" value="${trace.elasticsearch.hostNames}">
+				<description> <![CDATA[ tcp协议地址 ]]></description>
+			</property>-->
+
+			<property name="elasticsearch.rest.hostNames" value="${trace.elasticsearch.rest.hostNames}">
+				<description> <![CDATA[ rest协议地址 ]]></description>
+			</property>
+
+			<property name="elasticsearch.transport.hostNames" value="${trace.elasticsearch.transport.hostNames}">
+				<description> <![CDATA[ tcp协议地址 ]]></description>
+			</property>
+
+			<property name="elasticsearch.clusterName" value="${trace.elasticsearch.clusterName:}">
+				<description> <![CDATA[ es集群名称]]></description>
+			</property>
+			<property name="elasticsearch.dateFormat" value="${trace.elasticsearch.dateFormat}">
+				<description> <![CDATA[ 索引日期格式]]></description>
+			</property>
+			<property name="elasticsearch.timeZone" value="${trace.elasticsearch.timeZone}">
+				<description> <![CDATA[ 时区信息]]></description>
+			</property>
+			<property name="elasticsearch.indexName" value="${trace.elasticsearch.indexName}">
+				<description> <![CDATA[ 默认索引名称]]></description>
+			</property>
+			<property name="elasticsearch.indexType" value="${trace.elasticsearch.indexType}">
+				<description> <![CDATA[ 默认索引类型]]></description>
+			</property>
+			<property name="elasticsearch.ttl" value="${elasticsearch.ttl}">
+				<description> <![CDATA[ ms(毫秒) s(秒) m(分钟) h(小时) d(天) w(星期)]]></description>
+			</property>
+
+			<property name="elasticsearch.showTemplate" value="${trace.elasticsearch.showTemplate:false}">
+				<description> <![CDATA[ ms(毫秒) s(秒) m(分钟) h(小时) d(天) w(星期)]]></description>
+			</property>
+			<property name="elasticsearch.serialize" value="${trace.elasticsearch.serialize:}">
+				<description> <![CDATA[ elasticsearch.serializer=org.frameworkset.elasticsearch.ElasticSearchJSONEventSerializer]]></description>
+			</property>
+			<property name="elasticsearch.httpPool" value="${trace.elasticsearch.httpPool:default}">
+				<description> <![CDATA[ http连接池逻辑名称，在conf/httpclient.xml中配置]]></description>
+			</property>
+
+		</propes>
+	</property>
+	<property name="traceElasticSearch"
+			  class="org.frameworkset.elasticsearch.ElasticSearch"
+			  init-method="configure"
+			  destroy-method="stop"
+			  f:elasticsearchPropes="attr:traceElasticsearchPropes"/>
 
 </properties>
