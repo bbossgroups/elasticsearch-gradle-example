@@ -117,7 +117,7 @@ configure(allprojects) { project ->
 
 	dependencies {
 		testCompile 'junit:junit:4.12'
-	 
+
 		compile(
 				[group: 'com.bbossgroups.plugins', name: 'bboss-plugin-elasticsearch', version: "${bboss_es_version}", transitive: true]
 		)

@@ -193,9 +193,8 @@ public class ESTest {
 		demo.setAgentStarttime(new Date());
 		demo.setApplicationName("blackcatdemo");
 		demo.setContentbody("this is content body");
-		org.joda.time.format.DateTimeParserBucket s;
 		//创建模板
-		String response = clientUtil.addDateDocument("demo",//索引表
+		String response = clientUtil.addDateDocument("demo",//索引表,自动添加日期信息到索引表名称中
 				"demo",//索引类型
 				"createDemoDocument",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
 				demo);
@@ -203,7 +202,7 @@ public class ESTest {
 		System.out.println("addDateDocument-------------------------");
 		System.out.println(response);
 
-		response = clientUtil.getDocument("demo-"+date,//索引表
+		response = clientUtil.getDocument("demo-"+date,//索引表，手动指定日期信息
 				"demo",//索引类型
 				"5");
 		System.out.println("getDocument-------------------------");
