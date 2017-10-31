@@ -1,5 +1,10 @@
 package org.frameworkset.elasticsearch;
 
+import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.entity.*;
+import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -7,15 +12,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.frameworkset.elasticsearch.entity.ESAggDatas;
-import org.frameworkset.elasticsearch.entity.ESDatas;
-import org.frameworkset.elasticsearch.entity.ESIndice;
-import org.frameworkset.elasticsearch.entity.LongAggRangeHit;
-import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
-import org.frameworkset.elasticsearch.entity.Traces;
-import org.junit.Test;
-
 public class TraceESDaoTest {
+	@Test
+	public void healthCheck(){
+		ClientUtil rest = ElasticSearchHelper.getRestClientUtil("elasticSearch");
+		String  status = rest.executeHttp("/",null,ClientUtil.HTTP_GET);
+		System.out.println(status);
+	}
 	@Test
 	public void testQueryPeriodsTopN() throws ParseException, IOException {
 		TraceESDao traceESDao = new TraceESDao();

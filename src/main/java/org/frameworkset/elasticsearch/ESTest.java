@@ -27,7 +27,11 @@ public class ESTest {
 		System.out.println();
 	}
 	 
-
+	public void healthCheck(){
+		ClientUtil rest = ElasticSearchHelper.getRestClientUtil("elasticSearch");
+		String  status = rest.executeHttp("/",null,ClientUtil.HTTP_GET);
+		System.out.println(status);
+	}
  
 	public void test() throws Exception{
 		DefaultApplicationContext context = DefaultApplicationContext.getApplicationContext("conf/elasticsearch.xml");
