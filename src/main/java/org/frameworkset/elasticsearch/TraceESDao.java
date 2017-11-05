@@ -1,22 +1,15 @@
 package org.frameworkset.elasticsearch;
 
+import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.entity.*;
+import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
+import org.frameworkset.elasticsearch.handler.ESAggBucketHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import org.frameworkset.elasticsearch.client.ClientUtil;
-import org.frameworkset.elasticsearch.client.ESAggBucketHandle;
-import org.frameworkset.elasticsearch.entity.ESAggDatas;
-import org.frameworkset.elasticsearch.entity.ESDatas;
-import org.frameworkset.elasticsearch.entity.JsonDataResult;
-import org.frameworkset.elasticsearch.entity.LongAggRangeHit;
-import org.frameworkset.elasticsearch.entity.SearchResult;
-import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
-import org.frameworkset.elasticsearch.entity.TraceLongAggHit;
-import org.frameworkset.elasticsearch.entity.TraceScatter;
-import org.frameworkset.elasticsearch.entity.Traces;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 从Elastic Search里果询服务链路信息
@@ -118,7 +111,7 @@ public class TraceESDao {
                 TraceLongAggHit.class,
                 "traces","elapsed_stats",new ESAggBucketHandle<TraceLongAggHit>(){
                     @Override
-                    public void bucketHandle(SearchResult result, Map<String, Object> bucket, TraceLongAggHit obj, String key) {
+                    public void bucketHandle(RestResponse result, Map<String, Object> bucket, TraceLongAggHit obj, String key) {
                     	Map<String, Object > success_stats = (Map<String, Object >)bucket.get("success_stats");
                     	if(success_stats != null){
                     		List buckets = (List)success_stats.get("buckets");

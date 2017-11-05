@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class TraceESDaoTest {
 	@Test
@@ -96,5 +97,72 @@ public class TraceESDaoTest {
 
 			System.out.println(ElasticSearchHelper.getRestClientUtil().refreshIndexInterval("trace-*", 30));
 
+	}
+
+	@Test
+	public void testExactCondition() throws Exception{
+		// 响应报文
+		// 开始时间
+
+		TraceExtraCriteria traceExtraCriteria = new TraceExtraCriteria();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		traceExtraCriteria.setStartTime(dateFormat.parse("2017-10-24 00:00:00").getTime());
+		traceExtraCriteria.setEndTime(dateFormat.parse("2017-11-28 23:00:00").getTime());
+
+
+		// 查询条件
+		String queryCondition = "/testweb/sysmanager/role/toroleauthset.page";
+		// 查询状态：all 全部 success 处理成功 fail 处理失败
+		String queryStatus = "all";
+
+		if(queryCondition != null){
+
+//			queryCondition = ClientUtil.handleElasticSearchSpecialChars(queryCondition);
+//            queryCondition = queryCondition.replace("-","\\\\-");
+			//queryCondition = ClientUtil.handleElasticSearchSpecialChars(queryCondition);
+		}
+		String queryAction = null;
+		if(queryAction == null )
+			queryAction = "trace";
+		traceExtraCriteria.setQueryAction(queryAction);
+		traceExtraCriteria.setQueryCondition(queryCondition);
+		traceExtraCriteria.setQueryStatus(queryStatus);
+		traceExtraCriteria.setApplication("testweb88");
+		traceExtraCriteria.setOrderBy("time");
+		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		//全文检索结果
+		ESDatas<Traces> response = null;
+		//精确检索
+		traceExtraCriteria.setExactSearch(true);
+		traceExtraCriteria.setSearchFields(new String[]{"rpc","params"});
+		MapRestResponse restResponse = clientUtil.search("trace-*/_search","exactQueryServiceByCondition",traceExtraCriteria);
+		response = clientUtil.searchList("trace-*/_search","exactQueryServiceByCondition",traceExtraCriteria,Traces.class);
+		JsonDataResult ret = new JsonDataResult();
+		ret.setData(response.getDatas());
+		ret.setTotalSize(response.getTotalSize());
+		if(response.getAggregations() != null) {
+			/**
+			 *  "key_as_string": "2017-09-22T14:30:00.000+08:00",
+			 "key": 1506061800000,
+			 "doc_count": 1
+			 */
+			List<Map<String, Object>> traces_date_histogram = (List<Map<String, Object>>) response.getAggregations().get("traces_date_histogram").get("buckets");
+			ret.setDateHistogram(traces_date_histogram);
+
+		}
+
+
+
+
+		System.out.println();
+	}
+	@Test
+	public void testGetDocument(){
+		String id = "AV9hXgBkioW8Iiove8hI";
+		String indexName = "trace-2017.10.28";
+		String indexType = "trace";
+		ClientUtil clientUtil = ElasticSearchHelper.getRestClientUtil();
+		MapSearchHit hit = clientUtil.getDocumentHit(indexName,indexType,id);
+		System.out.println("");
 	}
 }

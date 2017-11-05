@@ -7,6 +7,26 @@ import java.util.List;
  * Created by huxin on 2017/5/13.
  */
 public class TraceExtraCriteria  {
+    /**
+     * 按条件查询时，是否是精确查找
+     */
+    private boolean exactSearch = false;
+
+    private boolean traceScore = false;
+
+    public boolean isTraceScore() {
+        return traceScore;
+    }
+
+    public void setTraceScore(boolean traceScore) {
+        this.traceScore = traceScore;
+    }
+
+    /**
+     * 查询字段
+     */
+    private String[] searchFields;
+
     //查询条件
 
 
@@ -39,6 +59,7 @@ public class TraceExtraCriteria  {
 
     private Long lastStartTime;
     private Long lastElapsed;
+    private Integer lastScore;
     private String lastId;
     // rpc
     private String rpc;
@@ -56,6 +77,15 @@ public class TraceExtraCriteria  {
     private int pageSize = 100;
     private String orderBy;
     private String queryAction;
+
+    public Integer getLastScore() {
+        return lastScore;
+    }
+
+    public void setLastScore(Integer lastScore) {
+        this.lastScore = lastScore;
+    }
+
     public String getQueryCondition() {
         return queryCondition;
     }
@@ -88,6 +118,22 @@ public class TraceExtraCriteria  {
     }
     public String getRpc() {
         return rpc;
+    }
+
+    public boolean isExactSearch() {
+        return exactSearch;
+    }
+
+    public void setExactSearch(boolean exactSearch) {
+        this.exactSearch = exactSearch;
+    }
+
+    public String[] getSearchFields() {
+        return searchFields;
+    }
+
+    public void setSearchFields(String[] searchFields) {
+        this.searchFields = searchFields;
     }
 
     public void setRpc(String rpc) {
