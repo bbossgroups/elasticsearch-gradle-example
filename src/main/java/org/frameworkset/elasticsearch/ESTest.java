@@ -187,7 +187,7 @@ public class ESTest {
 	public void testGetmapping(){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
 		String date = format.format(new Date());
-		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		System.out.println(clientUtil.getIndice("demo-"+date));
 		clientUtil.dropIndice("demo-"+date);
 	}
