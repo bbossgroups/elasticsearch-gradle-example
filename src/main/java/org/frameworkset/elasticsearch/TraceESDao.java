@@ -1,21 +1,28 @@
 package org.frameworkset.elasticsearch;
 
-import org.frameworkset.elasticsearch.client.ClientUtil;
-import org.frameworkset.elasticsearch.entity.*;
-import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
-import org.frameworkset.elasticsearch.handler.ESAggBucketHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import org.frameworkset.elasticsearch.client.ClientInterface;
+import org.frameworkset.elasticsearch.entity.ESAggDatas;
+import org.frameworkset.elasticsearch.entity.ESDatas;
+import org.frameworkset.elasticsearch.entity.JsonDataResult;
+import org.frameworkset.elasticsearch.entity.LongAggRangeHit;
+import org.frameworkset.elasticsearch.entity.RestResponse;
+import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
+import org.frameworkset.elasticsearch.entity.TraceLongAggHit;
+import org.frameworkset.elasticsearch.entity.TraceScatter;
+import org.frameworkset.elasticsearch.entity.Traces;
+import org.frameworkset.elasticsearch.handler.ESAggBucketHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 从Elastic Search里果询服务链路信息
  */
 public class TraceESDao {
-	protected ClientUtil clientUtil = null;
+	protected ClientInterface clientUtil = null;
     private static Logger logger = LoggerFactory.getLogger(TraceESDao.class);   
     protected void init(){
         if(clientUtil == null)

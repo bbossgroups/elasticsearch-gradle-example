@@ -1,11 +1,11 @@
 package org.frameworkset.elasticsearch;
 
-import org.frameworkset.elasticsearch.ElasticSearchHelper;
+import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.junit.Test;
 
 public class TemplateTest {
-	private ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
+	private ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
 	@Test
 	public void testCreateTemplate(){
 		String ttt = clientUtil.createTempate("trace_template","traceTemplate");

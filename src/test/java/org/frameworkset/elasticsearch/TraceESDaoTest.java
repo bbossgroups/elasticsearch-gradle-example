@@ -1,5 +1,6 @@
 package org.frameworkset.elasticsearch;
 
+import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.*;
 import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class TraceESDaoTest {
 	@Test
 	public void healthCheck(){
-		ClientUtil rest = ElasticSearchHelper.getRestClientUtil("elasticSearch");
+		ClientInterface rest = ElasticSearchHelper.getRestClientUtil();
 		String  status = rest.executeHttp("/",null,ClientUtil.HTTP_GET);
 		System.out.println(status);
 	}
@@ -129,7 +130,7 @@ public class TraceESDaoTest {
 		traceExtraCriteria.setQueryStatus(queryStatus);
 		traceExtraCriteria.setApplication("testweb88");
 		traceExtraCriteria.setOrderBy("time");
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
 		//全文检索结果
 		ESDatas<Traces> response = null;
 		//精确检索
@@ -161,7 +162,7 @@ public class TraceESDaoTest {
 		String id = "AV9hXgBkioW8Iiove8hI";
 		String indexName = "trace-2017.10.28";
 		String indexType = "trace";
-		ClientUtil clientUtil = ElasticSearchHelper.getRestClientUtil();
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		MapSearchHit hit = clientUtil.getDocumentHit(indexName,indexType,id);
 		System.out.println("");
 	}

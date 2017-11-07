@@ -1,16 +1,21 @@
 package org.frameworkset.elasticsearch;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
 import org.frameworkset.spi.DefaultApplicationContext;
 import org.frameworkset.spi.remote.http.MapResponseHandler;
 import org.frameworkset.spi.remote.http.StringResponseHandler;
 import org.frameworkset.util.FastDateFormat;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
  
 
 public class ESTest {
@@ -28,7 +33,7 @@ public class ESTest {
 	}
 	 
 	public void healthCheck(){
-		ClientUtil rest = ElasticSearchHelper.getRestClientUtil("elasticSearch");
+		ClientInterface rest = ElasticSearchHelper.getRestClientUtil("elasticSearch");
 		String  status = rest.executeHttp("/",null,ClientUtil.HTTP_GET);
 		System.out.println(status);
 	}
@@ -38,7 +43,7 @@ public class ESTest {
 		ElasticSearch elasticSearchSink = context.getTBeanObject("elasticSearch", ElasticSearch.class);
 //		ElasticSearch restelasticSearchSink = context.getTBeanObject("restelasticSearch", ElasticSearch.class);
 		
-		ClientUtil clientUtil = elasticSearchSink.getRestClientUtil();
+		ClientInterface clientUtil = elasticSearchSink.getRestClientUtil();
 		String entity = "{"+
     "\"aggs\": {"+
     "\"top_tags\": {"+
@@ -78,7 +83,7 @@ public class ESTest {
 		ElasticSearch elasticSearchSink = context.getTBeanObject("elasticSearch", ElasticSearch.class);
 //		ElasticSearch restelasticSearchSink = context.getTBeanObject("restelasticSearch", ElasticSearch.class);
 		
-		ClientUtil clientUtil = elasticSearchSink.getRestClientUtil();
+		ClientInterface clientUtil = elasticSearchSink.getRestClientUtil();
 		String entiry = "{\"query\" : {\"term\" : { \"rpc\" : \"content.page\" }}}";
 		String response = (String) clientUtil.executeRequest("trace-*/_search",entiry);
 		
@@ -86,9 +91,9 @@ public class ESTest {
 	}
  
 	public void testConfig() throws ParseException{
-//		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("traceElasticSearch",//可以指定elasticSearch服务器
+//		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("traceElasticSearch",//可以指定elasticSearch服务器
 //				"esmapper/estrace/ESTracesMapper.xml");
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
 		TraceExtraCriteria traceExtraCriteria = new TraceExtraCriteria();
 		traceExtraCriteria.setApplication("testweb1");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -108,7 +113,7 @@ public class ESTest {
  
 	public void testSearh() throws ParseException{
 
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("org/frameworkset/elasticsearch/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("org/frameworkset/elasticsearch/ESTracesMapper.xml");
 		TraceExtraCriteria traceExtraCriteria = new TraceExtraCriteria();
 		traceExtraCriteria.setApplication("testweb1");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -128,7 +133,7 @@ public class ESTest {
  
 	public void testTempate() throws ParseException{
 
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
 		//创建模板
 		String response = clientUtil.createTempate("demotemplate_1",//模板名称
 				"demoTemplate");//模板对应的脚本名称，在esmapper/estrace/ESTemplate.xml中配置
@@ -159,7 +164,7 @@ public class ESTest {
 	 
 	public void testCreateTempate() throws ParseException{
 
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
 		//创建模板
 		String response = clientUtil.createTempate("demotemplate_1",//模板名称
 				"demoTemplate");//模板对应的脚本名称，在estrace/ESTemplate.xml中配置
@@ -182,7 +187,7 @@ public class ESTest {
 	public void testGetmapping(){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
 		String date = format.format(new Date());
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
 		System.out.println(clientUtil.getIndice("demo-"+date));
 		clientUtil.dropIndice("demo-"+date);
 	}
@@ -191,7 +196,7 @@ public class ESTest {
 		testGetmapping();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
 		String date = format.format(new Date());
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
 		Demo demo = new Demo();
 		demo.setDemoId(5l);
 		demo.setAgentStarttime(new Date());
@@ -223,7 +228,7 @@ public class ESTest {
 		testGetmapping();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
 		String date = format.format(new Date());
-		ClientUtil clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
 		List<Demo> demos = new ArrayList<>();
 		Demo demo = new Demo();
 		demo.setDemoId(2l);
