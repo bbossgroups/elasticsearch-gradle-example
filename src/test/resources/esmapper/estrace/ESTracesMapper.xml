@@ -203,6 +203,88 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
         }
         ]]>
     </property>
+    <property name="must">
+        <![CDATA[
+            {
+                "query": {
+                    "bool": {
+                        "filter": [
+                             {
+                                "term": {
+                                    "dataTyp": "03"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "idNo": "370921199112274811"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "idTyp": "20"
+                                }
+                            }
+                        ]
+                        ,
+                        "must": [
+                            {
+                                "query_string": {
+                                    "query": "#foreach($value in $content)#if($velocityCount > 0) #end$value#end",
+                                    "analyze_wildcard": true,
+                                    "fields": ["content"]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "from": 0,
+                "size": 500,
+                "aggs": {}
+            }
+
+        ]]>
+    </property>
+
+    <property name="should">
+        <![CDATA[
+            {
+                "query": {
+                    "bool": {
+                        "filter": [
+                             {
+                                "term": {
+                                    "dataTyp": "03"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "idNo": "370921199112274811"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "idTyp": "20"
+                                }
+                            }
+                        ]
+                        ,
+                      "should": [
+                         #foreach($value in $content)
+                            #if($velocityCount > 0),#end
+                            {
+                                "wildcard": { "content": {"value": "*${value}*"}}
+                            }
+                         #end
+                        ]
+                    }
+                },
+                "from": 0,
+                "size": 500,
+                "aggs": {}
+            }
+
+        ]]>
+    </property>
     <!--
             分页查询和按日期分钟统计片段
             应用：链路检索和统计查询，rpc时间段统计查询
