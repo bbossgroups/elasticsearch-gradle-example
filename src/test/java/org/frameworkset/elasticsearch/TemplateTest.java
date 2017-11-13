@@ -8,6 +8,8 @@ public class TemplateTest {
 	private ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTemplate.xml");
 	@Test
 	public void testCreateTemplate(){
+		com.fasterxml.jackson.core.json.WriterBasedJsonGenerator s;
+		com.fasterxml.jackson.core.io.CharTypes s1;
 		String ttt = clientUtil.createTempate("trace_template","traceTemplate");
 
 		ttt = clientUtil.createTempate("tracesql_template","traceSQLTemplate");
