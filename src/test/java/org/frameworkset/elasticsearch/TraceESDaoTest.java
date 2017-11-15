@@ -4,6 +4,7 @@ import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.*;
 import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
+import org.frameworkset.spi.remote.http.MapResponseHandler;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -165,5 +166,32 @@ public class TraceESDaoTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		MapSearchHit hit = clientUtil.getDocumentHit(indexName,indexType,id);
 		System.out.println("");
+	}
+
+	@Test
+	public void clusterHeathCheck(){
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+		//返回json格式健康状态
+		String heath = clientUtil.executeHttp("_cluster/health?pretty",ClientInterface.HTTP_GET);
+		System.out.println(heath);
+
+	}
+
+	@Test
+	public void clusterState(){
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+		//返回json格式集群状态
+		String state = clientUtil.executeHttp("_cluster/state?pretty",ClientInterface.HTTP_GET);
+		System.out.println(state);
+
+	}
+
+	@Test
+	public void clusterMapState(){
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+		//返回map类型集群状态信息
+		Map<String,Object> state = clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new MapResponseHandler());
+		System.out.println(state);
+
 	}
 }
