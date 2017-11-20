@@ -191,6 +191,7 @@ public class TraceESDaoTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		//返回map类型集群状态信息
 		Map<String,Object> state = clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new MapResponseHandler());
+		clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new MapResponseHandler());
 		System.out.println(state);
 
 	}
