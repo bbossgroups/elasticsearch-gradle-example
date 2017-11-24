@@ -17,51 +17,24 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
             "size":10000,
             "query": {
                 "bool": {
-                    "filter": {
-                        "term": {
-                            "applicationName": "$application"
-                        }
-                    },
-                    "must": {
-                        "range": {
-                            "startTime": {
-                                "gte": $startTime,
-                                "lt": $endTime
-                            }
-                        }
-                    }
-                }
-            }
-        }]]>
-    </property>
-    <property>
-        <![CDATA[
-        {
-            "query": {
-                "bool":
-                {
-                    "must":
-                    [
+                    "filter": [
                         {
                             "term": {
-                                "idNo": "371083198712092524"
-                             }
+                                "applicationName.keyword": "$application"
+                            }
                         },
                         {
-                            "term": {
-                                "dataTyp": "01"
+                            "range": {
+                                "startTime": {
+                                    "gte": $startTime,
+                                    "lt": $endTime
+                                }
                             }
                         }
                     ]
                 }
-            },
-            "from": 0,
-            "size": 250,
-            "aggs": {
-
             }
-        }
-        ]]>
+        }]]>
     </property>
     <!--
     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
@@ -74,19 +47,20 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
         {
             "query": {
                 "bool": {
-                    "filter": {
-                        "term": {
-                            "applicationName": "$application"
-                        }
-                    },
-                    "must": {
-                        "range": {
-                            "startTime": {
-                                "gte": $startTime,
-                                "lt": $endTime
+                    "filter": [
+                        {
+                            "term": {
+                                "applicationName.keyword": "$application"
+                            }
+                        },
+                        {"range": {
+                                "startTime": {
+                                    "gte": $startTime,
+                                    "lt": $endTime
+                                }
                             }
                         }
-                    }
+                    ]
                 }
             },
             "size":0,
@@ -164,19 +138,21 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
         {
             "query": {
                 "bool": {
-                    "filter": {
-                        "term": {
-                            "applicationName": "$application"
-                        }
-                    },
-                    "must": {
-                        "range": {
-                            "startTime": {
-                                "gte": $startTime,
-                                "lt": $endTime
+                    "filter": [
+                        {
+                            "term": {
+                                "applicationName.keyword": "$application"
+                            }
+                        },
+                        {
+                            "range": {
+                                "startTime": {
+                                    "gte": $startTime,
+                                    "lt": $endTime
+                                }
                             }
                         }
-                    }
+                    ]
                 }
             },
             "size": 0,
@@ -203,93 +179,11 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
         }
         ]]>
     </property>
-    <property name="must">
-        <![CDATA[
-            {
-                "query": {
-                    "bool": {
-                        "filter": [
-                             {
-                                "term": {
-                                    "dataTyp": "03"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "idNo": "370921199112274811"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "idTyp": "20"
-                                }
-                            }
-                        ]
-                        ,
-                        "must": [
-                            {
-                                "query_string": {
-                                    "query": "#foreach($value in $content)#if($velocityCount > 0) #end$value#end",
-                                    "analyze_wildcard": true,
-                                    "fields": ["content"]
-                                }
-                            }
-                        ]
-                    }
-                },
-                "from": 0,
-                "size": 500,
-                "aggs": {}
-            }
-
-        ]]>
-    </property>
-
-    <property name="should">
-        <![CDATA[
-            {
-                "query": {
-                    "bool": {
-                        "filter": [
-                             {
-                                "term": {
-                                    "dataTyp": "03"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "idNo": "370921199112274811"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "idTyp": "20"
-                                }
-                            }
-                        ]
-                        ,
-                      "should": [
-                         #foreach($value in $content)
-                            #if($velocityCount > 0),#end
-                            {
-                                "wildcard": { "content": {"value": "*${value}*"}}
-                            }
-                         #end
-                        ]
-                    }
-                },
-                "from": 0,
-                "size": 500,
-                "aggs": {}
-            }
-
-        ]]>
-    </property>
     <!--
-            分页查询和按日期分钟统计片段
-            应用：链路检索和统计查询，rpc时间段统计查询
-            { "_score":"desc" },
-        -->
+        分页查询和按日期分钟统计片段
+        应用：链路检索和统计查询，rpc时间段统计查询
+        { "_score":"desc" },
+    -->
     <property name="searchAfterAggs">
         <![CDATA[
             #if($traceScore)
@@ -408,11 +302,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
                     "</mark>"
                 ],
                 "fields": {
-                    "*": {
-                        "highlight_query": {
-                            @{qcondition}
-                        }
-                    }
+                    "*": {}
                 },
                 "fragment_size": 2147483647
             }
@@ -508,7 +398,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
     </property>
     <property name="exactQueryServiceByCondition">
         <![CDATA[{
-            "version": true,
+
             @{exactSearchAfterAggs}
             "query": {
                 @{exactQcondition}
@@ -518,27 +408,25 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
 
     <property name="queryServiceDetailByRpc">
         <![CDATA[{
-            @{searchAfterAggs}
+            @{exactSearchAfterAggs}
             "query": {
                 "bool": {
                     "filter": [
                         {"term": {
-                            "applicationName": "$application"
+                            "applicationName.keyword": "$application"
 
                         }},
                         {"term": {
 
                              "rpc.keyword": "$rpc"
-                        }}
-                    ],
-                    "must": {
-                        "range": {
+                        }},
+                        {"range": {
                             "startTime": {
                                 "gte": $startTime,
                                 "lt": $endTime
-                            }
-                        }
+                        }}
                     }
+                    ]
                 }
             }
         }]]>
@@ -547,7 +435,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
     <property name="querySlowTraceTopN">
         <![CDATA[{
             "version": true,
-            "size": #[topN],
+            "size": 100,
             "sort": [
                 {"elapsed": "desc"}
             ],
@@ -555,23 +443,22 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
                 "bool": {
                     "filter": [
                         {"term": {
-                            "applicationName": #[application]
+                            "applicationName.keyword": #[application]
 
+                        }},
+                        {"range": {
+                                "startTime": {
+                                    "gte": #[startTime],
+                                    "lt": #[endTime]
+                                }
                         }}
-                    ],
-                    "must": {
-                        "range": {
-                            "startTime": {
-                                "gte": #[startTime],
-                                "lt": #[endTime]
-                            }
-                        }
-                    }
+                    ]
                 }
             }
         }]]></property>
 
- <property name="createDemoDocument">
+
+    <property name="createDemoDocument">
         <![CDATA[{"applicationName" : #[applicationName],"agentStarttime" : #[agentStarttime],"contentbody" : #[contentbody]}]]>
     </property>
 </properties>

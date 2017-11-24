@@ -1,21 +1,20 @@
 package org.frameworkset.elasticsearch;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
+import org.frameworkset.elasticsearch.entity.ESDatas;
+import org.frameworkset.elasticsearch.entity.JsonDataResult;
+import org.frameworkset.elasticsearch.entity.Traces;
 import org.frameworkset.spi.DefaultApplicationContext;
 import org.frameworkset.spi.remote.http.MapResponseHandler;
 import org.frameworkset.spi.remote.http.StringResponseHandler;
 import org.frameworkset.util.FastDateFormat;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
  
 
 public class ESTest {
@@ -23,7 +22,68 @@ public class ESTest {
 	public ESTest() {
 		// TODO Auto-generated constructor stub
 	}
-	 
+
+	public void testCondition() throws ParseException{
+		TraceESDao traceESDao = new TraceESDao();
+		// 响应报文
+		// 开始时间
+
+		TraceExtraCriteria traceExtraCriteria = new TraceExtraCriteria();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		traceExtraCriteria.setStartTime(dateFormat.parse("2017-10-24 00:00:00").getTime());
+		traceExtraCriteria.setEndTime(dateFormat.parse("2017-11-28 23:00:00").getTime());
+
+
+		// 查询条件
+		String queryCondition = "/testweb/admin/content.page";
+		// 查询状态：all 全部 success 处理成功 fail 处理失败
+		String queryStatus = "all";
+
+		if(queryCondition != null){
+
+			queryCondition = ClientUtil.handleElasticSearchSpecialChars(queryCondition);
+//            queryCondition = queryCondition.replace("-","\\\\-");
+			//queryCondition = ClientUtil.handleElasticSearchSpecialChars(queryCondition);
+		}
+		String queryAction = null;
+		if(queryAction == null )
+			queryAction = "trace";
+		traceExtraCriteria.setQueryAction(queryAction);
+		traceExtraCriteria.setQueryCondition(queryCondition);
+		traceExtraCriteria.setQueryStatus(queryStatus);
+		traceExtraCriteria.setApplication("testweb88");
+		traceExtraCriteria.setOrderBy("time");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		String retString = clientUtil.executeRequest("trace-*/_search?explain","queryServiceByCondition",traceExtraCriteria);
+		System.out.println(retString);
+
+		retString = clientUtil.executeRequest("trace-*/_search","queryServiceByCondition",traceExtraCriteria);
+		System.out.println(retString);
+		//全文检索结果
+		ESDatas<Traces> response = clientUtil.searchList("trace-*/_search","queryServiceByCondition",traceExtraCriteria,Traces.class);
+		//精确检索
+		traceExtraCriteria.setExactSearch(true);
+		traceExtraCriteria.setSearchFields(new String[]{"rpc"});
+		response = clientUtil.searchList("trace-*/_search","exactQueryServiceByCondition",traceExtraCriteria,Traces.class);
+		JsonDataResult ret = new JsonDataResult();
+		ret.setData(response.getDatas());
+		ret.setTotalSize(response.getTotalSize());
+		if(response.getAggregations() != null) {
+			/**
+			 *  "key_as_string": "2017-09-22T14:30:00.000+08:00",
+			 "key": 1506061800000,
+			 "doc_count": 1
+			 */
+			List<Map<String, Object>> traces_date_histogram = (List<Map<String, Object>>) response.getAggregations().get("traces_date_histogram").get("buckets");
+			ret.setDateHistogram(traces_date_histogram);
+
+		}
+
+
+
+
+		System.out.println();
+	}
 	public void testFastDateFormat() throws ParseException{
 		String data = "2005-01-10 12:00:00";
 		String format = "yyyy-MM-dd HH:mm:ss";

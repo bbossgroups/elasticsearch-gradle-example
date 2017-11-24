@@ -13,6 +13,19 @@ public class TemplateTest {
 		String ttt = clientUtil.createTempate("trace_template","traceTemplate");
 
 		ttt = clientUtil.createTempate("tracesql_template","traceSQLTemplate");
+
+		//获取模板
+		/**
+		 * 指定模板
+		 * /_template/trace_template
+		 * /_template/trace*
+		 * 所有模板 /_template
+		 *
+		 */
+		String template = clientUtil.executeHttp("/_template/trace_template",ClientUtil.HTTP_GET);
+		System.out.println("HTTP_GET-------------------------");
+		System.out.println(template);
+		template = clientUtil.getTempate("trace_template");
 	}
 
 	@Test

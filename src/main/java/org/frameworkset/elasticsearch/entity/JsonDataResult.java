@@ -13,12 +13,11 @@ import java.util.Map;
  */
 public class JsonDataResult<T> implements Serializable {
 
-	private static final long serialVersionUID = 6356052535803891061L;
 	// 开始时间
 	private long startTime;
 	// 结束时间
 	private long endTime;
-	
+
 	// 返回数据信息
 	private T data;
 
@@ -46,11 +45,11 @@ public class JsonDataResult<T> implements Serializable {
 	}
 
 	private long totalSize;
-	
+
 	public JsonDataResult() {
 		super();
 	}
-	
+
 	public JsonDataResult(T t) {
 		this();
 		this.data = t;

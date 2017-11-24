@@ -6,6 +6,7 @@ public class TestMain {
 
 	public static void main(String[] args) throws ParseException {
 		ESTest esTest = new ESTest();
+		esTest.testCondition();
 		//检查健康性
 		esTest.healthCheck();
 		//测试模板管理功能
