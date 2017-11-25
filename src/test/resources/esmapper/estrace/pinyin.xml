@@ -1,0 +1,146 @@
+<!--es
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-term-query.html
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-query.html
+-->
+<properties>
+    <property name="demoTemplate">
+        <![CDATA[{
+            "template": "demo*",
+            "settings": {
+                "number_of_shards": 6,
+                "index":{
+                     "refresh_interval": "5s",
+                     "analysis" : {
+                        "analyzer" : {
+                            "pinyin_analyzer" : {
+                                "tokenizer" : "my_pinyin"
+                                }
+                        },
+                        "tokenizer" : {
+                            "my_pinyin" : {
+                                "type" : "pinyin",
+                                "keep_separate_first_letter" : false,
+                                "keep_full_pinyin" : true,
+                                "keep_original" : true,
+                                "limit_first_letter_length" : 16,
+                                "lowercase" : true,
+                                "remove_duplicated_term" : true
+                            }
+                        }
+                    }
+                }
+            },
+            "mappings": {
+                "demo": {
+                    "properties": {
+                        "contentbody": {
+                            "type": "text",
+                            "term_vector": "with_positions_offsets",
+                            "analyzer": "ik_max_word",
+                            "search_analyzer": "ik_max_word",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "agentStarttime": {
+                            "type": "date",
+                            "format":"yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||epoch_millis"
+                        },
+                        "applicationName": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "pinyin": {
+                                    "type": "text",
+                                    "store": false,
+                                    "term_vector": "with_offsets",
+                                    "analyzer": "pinyin_analyzer",
+                                    "boost": 10
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+    <property name="createDemoIndice">
+        <![CDATA[{
+            "settings": {
+                "number_of_shards": 6,
+                "index.refresh_interval": "5s",
+                "analysis" : {
+                    "analyzer" : {
+                        "pinyin_analyzer" : {
+                            "tokenizer" : "my_pinyin"
+                            }
+                    },
+                    "tokenizer" : {
+                        "my_pinyin" : {
+                            "type" : "pinyin",
+                            "keep_separate_first_letter" : false,
+                            "keep_full_pinyin" : true,
+                            "keep_original" : true,
+                            "limit_first_letter_length" : 16,
+                            "lowercase" : true,
+                            "remove_duplicated_term" : true
+                        }
+                    }
+                }
+            },
+            "mappings": {
+                "demo": {
+                    "properties": {
+                        "contentbody": {
+                            "type": "text",
+                            "term_vector": "with_positions_offsets",
+                            "analyzer": "ik_max_word",
+                            "search_analyzer": "ik_max_word",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+
+                                }
+                            }
+                        },
+                        "agentStarttime": {
+                            "type": "date",
+                            "format":"yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||epoch_millis"
+                        },
+                        "applicationName": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "keyword",
+                            "fields": {
+                                "pinyin": {
+                                    "type": "text",
+                                    "store": false,
+                                    "term_vector": "with_offsets",
+                                    "analyzer": "pinyin_analyzer",
+                                    "boost": 10
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+</properties>
