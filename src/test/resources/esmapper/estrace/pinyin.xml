@@ -1,6 +1,11 @@
 <!--es
 https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-term-query.html
 https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-query.html
+
+ik:
+https://github.com/medcl/elasticsearch-analysis-ik
+pinyin:
+https://github.com/medcl/elasticsearch-analysis-pinyin
 -->
 <properties>
     <property name="demoTemplate">
