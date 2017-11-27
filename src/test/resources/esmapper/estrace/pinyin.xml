@@ -148,4 +148,223 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
         }]]>
     </property>
 
+    <property name="pboosMapAdressPinyinTemplate">
+        <![CDATA[{
+            "template": "pboos-map-adress-*",
+            "settings": {
+                "number_of_shards": 6,
+                "index.refresh_interval": "5s",
+                "analysis" : {
+                    "analyzer" : {
+                        "pinyin_analyzer" : {
+                            "tokenizer" : "my_pinyin"
+                        }
+                    },
+                    "tokenizer" : {
+                        "my_pinyin" : {
+                            "type" : "pinyin",
+                            "keep_separate_first_letter" : false,
+                            "keep_full_pinyin" : true,
+                            "keep_original" : true,
+                            "limit_first_letter_length" : 16,
+                            "lowercase" : true,
+                            "remove_duplicated_term" : true
+                        }
+                    }
+                }
+            },
+            "mappings": {
+                "boosmap": {
+                    "properties": {
+                        "standardAddrId":{
+                            "type":"keyword"
+                        },
+                        "detailName": {
+                            "type": "text",
+                            "term_vector": "with_offsets",
+                            "analyzer": "pinyin_analyzer",
+                            "boost": 10,
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "cityName":{
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "countyName":{
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "location":{
+                            "type": "geo_point"
+                        }
+
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+    <property name="pboosMapAdressTemplate">
+        <![CDATA[{
+            "template": "pboos-map-adress-*",
+            "settings": {
+                "number_of_shards": 6,
+                "index.refresh_interval": "5s",
+                "analysis" : {
+                    "analyzer" : {
+                        "pinyin_analyzer" : {
+                            "tokenizer" : "my_pinyin"
+                        }
+                    },
+                    "tokenizer" : {
+                        "my_pinyin" : {
+                            "type" : "pinyin",
+                            "keep_separate_first_letter" : false,
+                            "keep_full_pinyin" : true,
+                            "keep_original" : true,
+                            "limit_first_letter_length" : 16,
+                            "lowercase" : true,
+                            "remove_duplicated_term" : true
+                        }
+                    }
+                }
+            },
+            "mappings": {
+                "boosmap": {
+                    "properties": {
+                        "standardAddrId":{
+                            "type":"keyword"
+                        },
+                        "detailName": {
+                            "type": "text",
+                            "term_vector": "with_positions_offsets",
+                            "analyzer": "ik_max_word",
+                            "search_analyzer": "ik_max_word",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "cityName":{
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "countyName":{
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "location":{
+                            "type": "geo_point"
+                        }
+
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+
+    <property name="pboosMapAdressNGRMTemplate">
+        <![CDATA[{
+            "template": "pboos-map-adress-*",
+            "settings": {
+                "analysis": {
+                      "analyzer": {
+                        "ngram_analyzer": {
+                          "tokenizer": "ngram_tokenizer"
+                        }
+                      },
+                      "tokenizer": {
+                        "ngram_tokenizer": {
+                          "type": "ngram",
+                          "min_gram": 2,
+                          "max_gram": 25,
+                          "token_chars": [
+                            "letter",
+                            "digit"
+                          ]
+                        }
+                      }
+                    }
+                  },
+            "mappings": {
+                "boosmap": {
+                    "properties": {
+                        "standardAddrId":{
+                            "type":"keyword"
+                        },
+                        "detailName": {
+                            "type":"text","analyzer": "ngram_analyzer"
+                        },
+                        "cityName":{
+                            "type":"text","index":false
+                        },
+                        "countyName":{
+                            "type":"text","index":false
+                        },
+                        "location":{
+                            "type": "geo_point"
+                        }
+
+                    }
+                }
+
+            }
+        }]]>
+    </property>
+
+    <property name="updateDocument"><![CDATA[
+        {
+			"doc" : {"cityName": "潭市", "standardAddrId": "38130122", "detailName": "tan市贵溪市花园办事处建设路四冶生活区2-11栋3单元1层101", "location": "28.292781,117.238963", "countyName": "贵溪市"}
+		}
+    ]]></property>
+
+    <property name="searchPinyin"><![CDATA[{
+        "size": 100,
+        "sort": [
+            {"elapsed": "desc"}
+        ],
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "match": {
+                            "detailName": "40栋1单元12层"
+                        }
+                    },
+                    {
+                        "geo_distance": {
+                            "distance": "0.5km",
+                            "location": {
+                                "lon": "115.89059039528394",
+                                "lat": "28.64884839129429"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }]]></property>
+
 </properties>

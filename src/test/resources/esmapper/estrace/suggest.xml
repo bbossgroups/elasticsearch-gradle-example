@@ -79,7 +79,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggester
         }]]>
     </property>
 
-    <property name="doSuggest"><![CDATA[{
+    <property name="doComplete"><![CDATA[{
          "_source": "name",
         "suggest": {
             "song-suggest" : {
@@ -91,5 +91,68 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggester
             }
         }
     }]]></property>
+
+    <property name="doTerm"><![CDATA[{
+        "suggest": {
+            "my-suggestion": {
+                "text": "$prefix",
+                "term": {
+                    "suggest_mode": "missing",
+                    "field": "contentbody"
+                }
+            }
+        }
+    }]]></property>
+
+
+    <property name="doPhrase"><![CDATA[{
+      "suggest": {
+        "my-suggestion": {
+          "text": "$prefix",
+          "phrase": {
+            "field": "contentbody",
+            "highlight": {
+              "pre_tag": "<em>",
+              "post_tag": "</em>"
+            }
+          }
+        }
+      }
+    }]]></property>
+
+
+
+    <property name="pinyinQuery">
+        <![CDATA[{
+
+            "sort": [
+                {"startTime": "desc"},
+                {"_uid": "desc"}
+            ],
+
+
+            "size":100,
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "term": {
+                                "applicationName.keyword": "$application"
+                            }
+                        },
+                        {
+                            "range": {
+                                "startTime": {
+                                    "gte": $startTime,
+                                    "lt": $endTime
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }]]>
+    </property>
+
 
 </properties>
