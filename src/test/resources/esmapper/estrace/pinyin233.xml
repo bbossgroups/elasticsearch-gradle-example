@@ -124,16 +124,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                 "must": [
                     {
                         "match": {
-                            "detailName": "yjt"
-                        }
-                    },
-                    {
-                        "geo_distance": {
-                            "distance": "0.5km",
-                            "location": {
-                                "lon": "117.101757",
-                                "lat": "28.284787"
-                            }
+                            "detailName": "$detailName"
                         }
                     },
                     {
