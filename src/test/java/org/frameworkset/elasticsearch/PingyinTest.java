@@ -4,14 +4,13 @@ import com.frameworkset.util.FileUtil;
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
+import org.frameworkset.elasticsearch.entity.ESDatas;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class PingyinTest {
 	@Test
@@ -130,6 +129,13 @@ public class PingyinTest {
 	}
 
 	@Test
+	public void testGetMapping(){
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+		String template = clientUtil.getTempate("pboosmapadresstemplate");
+		System.out.println(template);
+		System.out.println(clientUtil.getIndexMapping("pboos-map-adress-1503973107",true));
+	}
+	@Test
 	public void testPboosMapAdressTemplate(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		try {
@@ -143,7 +149,7 @@ public class PingyinTest {
 		}
 
 		try {
-			String template = clientUtil.createTempate("pboosmapadresstemplate", "pboosMapAdressPinyinTemplate");
+			String template = clientUtil.createTempate("pboosmapadresstemplate", "pboosMapAdressPinyinTemplate1");
 			System.out.println(template);
 		} catch (ElasticSearchException e) {
 			// TODO Auto-generated catch block
@@ -192,7 +198,7 @@ public class PingyinTest {
 		//System.out.print(data);
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		String temp = clientUtil.executeHttp("_bulk",data, ClientUtil.HTTP_POST);
-//		System.out.println(temp);
+		System.out.println(temp);
 	}
 
 	@Test
@@ -209,6 +215,28 @@ public class PingyinTest {
 
 	@Test
 	public void searchPinyin(){
-
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
+		Map<String,String> params = new HashMap<String,String>();
+//		params.put("detailName","红谷滩红角洲");
+		params.put("detailName","huayuan");
+		params.put("distance","0.5km");
+		params.put("lon","117.101757");
+		params.put("lat","28.284787");
+		ESDatas<PboosMap> datas = clientUtil.searchList("pboos-map-adress-1503973107/_search","searchPinyin",params,PboosMap.class);
+		System.out.print(clientUtil.executeRequest("pboos-map-adress-1503973107/_search","searchPinyin",params));
 	}
+
+	@Test
+	public void searchPinyinmatch_phrase_prefix(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
+		Map<String,String> params = new HashMap<String,String>();
+//		params.put("detailName","红谷滩红角洲");
+		params.put("detailName","huayuan");
+		params.put("distance","0.5km");
+		params.put("lon","117.101757");
+		params.put("lat","28.284787");
+		ESDatas<PboosMap> datas = clientUtil.searchList("pboos-map-adress-1503973107/_search","searchPinyinmatch_phrase_prefix",params,PboosMap.class);
+		System.out.print(clientUtil.executeRequest("pboos-map-adress-1503973107/_search","searchPinyinmatch_phrase_prefix",params));
+	}
+
 }

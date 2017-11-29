@@ -1,0 +1,153 @@
+<!--es
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-term-query.html
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-query.html
+
+ik:
+https://github.com/medcl/elasticsearch-analysis-ik
+pinyin:
+https://github.com/medcl/elasticsearch-analysis-pinyin
+-->
+<properties>
+
+
+    <property name="pboosMapAdressPinyinTemplate">
+        <![CDATA[{
+            "template": "pboos-map-adress-*",
+            "settings": {
+                "number_of_shards": 6,
+                "index.refresh_interval": "5s",
+                "analysis" : {
+                    "analyzer" : {
+                        "pinyin_analyzer" : {
+                            "tokenizer" : "my_pinyin",
+                            "filter" : ["standard"]
+                            }
+                    },
+                    "tokenizer" : {
+                        "my_pinyin" : {
+                            "type" : "pinyin",
+                            "first_letter" : "none",
+                            "padding_char" : " "
+                        }
+                    }
+                }
+            },
+            "mappings": {
+                "boosmap": {
+                    "properties": {
+                        "standardAddrId":{
+                             "type":"string","index":"not_analyzed"
+                        },
+                        "detailName": {
+                            "type": "string",
+                            "term_vector": "with_offsets",
+                            "analyzer": "pinyin_analyzer",
+                            "boost": 10
+                        },
+                        "cityName":{
+                             "type":"string","index":"not_analyzed"
+                        },
+                        "countyName":{
+                             "type":"string","index":"not_analyzed"
+                        },
+                        "location":{
+                            "type": "geo_point"
+                        }
+
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+
+
+    <property name="pboosMapAdressNGRMTemplate">
+        <![CDATA[{
+            "template": "pboos-map-adress-*",
+            "settings": {
+                "analysis": {
+                      "analyzer": {
+                        "ngram_analyzer": {
+                          "tokenizer": "ngram_tokenizer"
+                        }
+                      },
+                      "tokenizer": {
+                        "ngram_tokenizer": {
+                          "type": "ngram",
+                          "min_gram": 2,
+                          "max_gram": 25,
+                          "token_chars": [
+                            "letter",
+                            "digit"
+                          ]
+                        }
+                      }
+                    }
+                  },
+            "mappings": {
+                "boosmap": {
+                    "properties": {
+                        "standardAddrId":{
+                            "type":"keyword"
+                        },
+                        "detailName": {
+                            "type":"text","analyzer": "ngram_analyzer"
+                        },
+                        "cityName":{
+                            "type":"text","index":false
+                        },
+                        "countyName":{
+                            "type":"text","index":false
+                        },
+                        "location":{
+                            "type": "geo_point"
+                        }
+
+                    }
+                }
+
+            }
+        }]]>
+    </property>
+
+    <property name="updateDocument"><![CDATA[
+        {
+			"doc" : {"cityName": "潭市", "standardAddrId": "38130122", "detailName": "tan市贵溪市花园办事处建设路四冶生活区2-11栋3单元1层101", "location": "28.292781,117.238963", "countyName": "贵溪市"}
+		}
+    ]]></property>
+
+    <property name="searchPinyin"><![CDATA[{
+        "size": 100,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "match": {
+                            "detailName": "yjt"
+                        }
+                    },
+                    {
+                        "geo_distance": {
+                            "distance": "0.5km",
+                            "location": {
+                                "lon": "117.101757",
+                                "lat": "28.284787"
+                            }
+                        }
+                    },
+                    {
+                        "geo_distance": {
+                            "distance": "$distance",
+                            "location": {
+                                "lon": "$lon",
+                                "lat": "$lat"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }]]></property>
+
+</properties>

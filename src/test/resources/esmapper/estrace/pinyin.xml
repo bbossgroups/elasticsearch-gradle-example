@@ -216,6 +216,75 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
         }]]>
     </property>
 
+    <property name="pboosMapAdressPinyinTemplate1">
+        <![CDATA[{
+            "template": "pboos-map-adress-*",
+            "settings": {
+                "number_of_shards": 6,
+                "index.refresh_interval": "5s",
+                "analysis" : {
+                    "analyzer" : {
+                        "pinyin_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "ik_smart",
+                            "filter": ["my_pinyin", "word_delimiter"]
+                        }
+                    },
+                    "filter" : {
+                        "my_pinyin" : {
+                            "type" : "pinyin",
+                            "keep_separate_first_letter" : false,
+                            "keep_full_pinyin" : true,
+                            "keep_original" : true,
+                            "limit_first_letter_length" : 16,
+                            "lowercase" : true,
+                            "remove_duplicated_term" : true
+                        }
+                    }
+                }
+            },
+            "mappings": {
+                "boosmap": {
+                    "properties": {
+                        "standardAddrId":{
+                            "type":"keyword"
+                        },
+                        "detailName": {
+                            "type": "text",
+                            "analyzer": "pinyin_analyzer",
+                            "boost": 10,
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "cityName":{
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "countyName":{
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "location":{
+                            "type": "geo_point"
+                        }
+
+                    }
+                }
+            }
+        }]]>
+    </property>
+
     <property name="pboosMapAdressTemplate">
         <![CDATA[{
             "template": "pboos-map-adress-*",
@@ -342,29 +411,58 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
 
     <property name="searchPinyin"><![CDATA[{
         "size": 100,
-        "sort": [
-            {"elapsed": "desc"}
-        ],
         "query": {
             "bool": {
                 "must": [
                     {
-                        "match": {
-                            "detailName": "40栋1单元12层"
+                         "match_phrase" : {
+                            "detailName" : "陈春福"
                         }
-                    },
-                    {
-                        "geo_distance": {
-                            "distance": "0.5km",
-                            "location": {
-                                "lon": "115.89059039528394",
-                                "lat": "28.64884839129429"
-                            }
-                        }
+
                     }
                 ]
             }
         }
     }]]></property>
+
+
+    <property name="searchPinyinmatch_phrase_prefix"><![CDATA[{
+        "size": 100,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                          "match_phrase_prefix" : {
+                                "detailName" : {
+                                    "query" : "chen",
+                                    "max_expansions" : 10
+                                }
+                            }
+
+                    }
+                ]
+            }
+        }
+    }]]></property>
+
+
+    <property name="searchPinyin1"><![CDATA[{
+        "size": 100,
+        "query": {
+            "bool": {
+                "must": [
+                 {
+                    "query_string": {
+                        "query": "$detailName",
+                        "analyze_wildcard": true,
+                        "fields": ["detailName"]
+                    }
+                 }
+                ]
+            }
+        }
+    }]]></property>
+
+
 
 </properties>
