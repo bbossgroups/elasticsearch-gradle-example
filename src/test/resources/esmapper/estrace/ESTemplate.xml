@@ -165,7 +165,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
     </property>
 
     <property name="traceTemplate">
-        <![CDATA[{
+        <![CDATA[{  trace-2017.11.25 trace-2017.11.26   trace-*
             "template": "trace-*",
             "settings": {
                 "number_of_shards": 6,

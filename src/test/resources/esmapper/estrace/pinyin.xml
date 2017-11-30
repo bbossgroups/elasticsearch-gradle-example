@@ -148,19 +148,21 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
         }]]>
     </property>
 
-    <property name="pboosMapAdressPinyinTemplate">
+    <property name="shopGoodUserPinyinTemplate">
         <![CDATA[{
-            "template": "pboos-map-adress-*",
+            "template": "shop-good-user-*",
             "settings": {
                 "number_of_shards": 6,
                 "index.refresh_interval": "5s",
                 "analysis" : {
                     "analyzer" : {
-                        "pinyin_analyzer" : {
-                            "tokenizer" : "my_pinyin"
+                        "pinyin_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "ik_smart",
+                            "filter": ["my_pinyin", "word_delimiter"]
                         }
                     },
-                    "tokenizer" : {
+                    "filter" : {
                         "my_pinyin" : {
                             "type" : "pinyin",
                             "keep_separate_first_letter" : false,
@@ -174,49 +176,297 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                 }
             },
             "mappings": {
-                "boosmap": {
+                "shop": {
                     "properties": {
-                        "standardAddrId":{
-                            "type":"keyword"
+                        "id": {
+                            "type": "long"
                         },
-                        "detailName": {
+                        "name": {
                             "type": "text",
                             "term_vector": "with_offsets",
                             "analyzer": "pinyin_analyzer",
-                            "boost": 10,
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword"
-                                }
-                            }
+                            "boost": 10
                         },
-                        "cityName":{
+                        "address": {
                             "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword"
-                                }
-                            }
+                            "term_vector": "with_offsets",
+                            "analyzer": "pinyin_analyzer",
+                            "boost": 10
                         },
-                        "countyName":{
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword"
-                                }
-                            }
+                        "city": {
+                            "type": "integer"
                         },
-                        "location":{
+                        "country": {
+                            "type": "integer"
+                        },
+                        "location": {
                             "type": "geo_point"
+                        },
+                        "star": {
+                            "type": "integer"
+                        },
+                        "sale": {
+                            "type": "long"
+                        },
+                        "favor": {
+                            "type": "long"
+                        },
+                        "desc": {
+                            "type": "keyword"
+                        },
+                        "logo": {
+                            "type": "keyword"
+                        },
+                        "status": {
+                            "type": "integer"
+                        },
+                        "cid": {
+                            "type": "long"
+                        },
+                        "typeId": {
+                            "type": "integer"
+                        },
+                        "shopBusiType": {
+                            "type": "keyword"
+                        },
+                        "time": {
+                            "type": "date",
+                            "format": "epoch_millis"
                         }
-
+                    }
+                },
+                "good": {
+                    "_parent": {
+                        "type": "shop"
+                    },
+                    "_routing": {
+                        "required": false
+                    },
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "term_vector": "with_offsets",
+                            "analyzer": "pinyin_analyzer",
+                            "boost": 10
+                        },
+                        "desc": {
+                            "type": "keyword"
+                        },
+                        "keyword": {
+                            "type": "keyword"
+                        },
+                        "goodCode": {
+                            "type": "keyword"
+                        },
+                        "chnlCode": {
+                            "type": "keyword"
+                        },
+                        "chnlName": {
+                            "type": "keyword"
+                        },
+                        "saleTime": {
+                            "type": "date",
+                            "format": "epoch_millis"
+                        },
+                        "minMarketPrice": {
+                            "type": "float"
+                        },
+                        "maxMarketPrice": {
+                            "type": "float"
+                        },
+                        "minSalePrice": {
+                            "type": "float"
+                        },
+                        "maxSalePrice": {
+                            "type": "float"
+                        },
+                        "totalSaleNum": {
+                            "type": "integer"
+                        },
+                        "logo": {
+                            "type": "keyword"
+                        },
+                        "onlyPhoneCount": {
+                            "type": "integer"
+                        },
+                        "agreementCount": {
+                            "type": "integer"
+                        },
+                        "smallPhoneCount": {
+                            "type": "integer"
+                        },
+                        "isSpecial": {
+                            "type": "integer"
+                        },
+                        "isRecommend": {
+                            "type": "integer"
+                        },
+                        "firstCateCode": {
+                            "type": "keyword"
+                        },
+                        "secondCateCode": {
+                            "type": "keyword"
+                        },
+                        "groundingType": {
+                            "type": "keyword"
+                        },
+                        "bookCitys": {
+                            "type": "keyword"
+                        },
+                        "shopId": {
+                            "type": "integer"
+                        },
+                        "location": {
+                            "type": "geo_point"
+                        },
+                        "menuId": {
+                            "type": "integer"
+                        },
+                        "stock": {
+                            "type": "integer"
+                        },
+                        "sourceId": {
+                            "type": "integer"
+                        },
+                        "time": {
+                            "type": "date",
+                            "format": "epoch_millis"
+                        }
+                    }
+                },
+                "huihgood": {
+                    "_parent": {
+                        "type": "shop"
+                    },
+                    "_routing": {
+                        "required": false
+                    },
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "term_vector": "with_offsets",
+                            "analyzer": "pinyin_analyzer",
+                            "boost": 10
+                        },
+                        "desc": {
+                            "type": "keyword"
+                        },
+                        "keyword": {
+                            "type": "keyword"
+                        },
+                        "goodCode": {
+                            "type": "keyword"
+                        },
+                        "chnlCode": {
+                            "type": "keyword"
+                        },
+                        "chnlName": {
+                            "type": "keyword"
+                        },
+                        "saleTime": {
+                            "type": "date",
+                            "format": "epoch_millis"
+                        },
+                        "minMarketPrice": {
+                            "type": "float"
+                        },
+                        "maxMarketPrice": {
+                            "type": "float"
+                        },
+                        "minSalePrice": {
+                            "type": "float"
+                        },
+                        "maxSalePrice": {
+                            "type": "float"
+                        },
+                        "totalSaleNum": {
+                            "type": "integer"
+                        },
+                        "logo": {
+                            "type": "keyword"
+                        },
+                        "onlyPhoneCount": {
+                            "type": "integer"
+                        },
+                        "agreementCount": {
+                            "type": "integer"
+                        },
+                        "smallPhoneCount": {
+                            "type": "integer"
+                        },
+                        "isSpecial": {
+                            "type": "integer"
+                        },
+                        "isRecommend": {
+                            "type": "integer"
+                        },
+                        "firstCateCode": {
+                            "type": "keyword"
+                        },
+                        "secondCateCode": {
+                            "type": "keyword"
+                        },
+                        "groundingType": {
+                            "type": "keyword"
+                        },
+                        "bookCitys": {
+                            "type": "keyword"
+                        },
+                        "shopId": {
+                            "type": "integer"
+                        },
+                        "location": {
+                            "type": "geo_point"
+                        },
+                        "menuId": {
+                            "type": "integer"
+                        },
+                        "stock": {
+                            "type": "integer"
+                        },
+                        "sourceId": {
+                            "type": "integer"
+                        },
+                        "time": {
+                            "type": "date",
+                            "format": "epoch_millis"
+                        }
+                    }
+                },
+                "good_menu": {
+                    "_parent": {
+                        "type": "good"
+                    },
+                    "_routing": {
+                        "required": false
+                    },
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "goodsId": {
+                            "type": "integer"
+                        },
+                        "shopId": {
+                            "type": "integer"
+                        },
+                        "menuId": {
+                            "type": "integer"
+                        }
                     }
                 }
             }
+
         }]]>
     </property>
 
-    <property name="pboosMapAdressPinyinTemplate1">
+    <property name="pboosMapAdressPinyinTemplate">
         <![CDATA[{
             "template": "pboos-map-adress-*",
             "settings": {
@@ -352,56 +602,32 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
             }
         }]]>
     </property>
-
-
-    <property name="pboosMapAdressNGRMTemplate">
-        <![CDATA[{
-            "template": "pboos-map-adress-*",
-            "settings": {
-                "analysis": {
-                      "analyzer": {
-                        "ngram_analyzer": {
-                          "tokenizer": "ngram_tokenizer"
-                        }
-                      },
-                      "tokenizer": {
-                        "ngram_tokenizer": {
-                          "type": "ngram",
-                          "min_gram": 2,
-                          "max_gram": 25,
-                          "token_chars": [
-                            "letter",
-                            "digit"
-                          ]
-                        }
-                      }
-                    }
-                  },
-            "mappings": {
-                "boosmap": {
-                    "properties": {
-                        "standardAddrId":{
-                            "type":"keyword"
-                        },
-                        "detailName": {
-                            "type":"text","analyzer": "ngram_analyzer"
-                        },
-                        "cityName":{
-                            "type":"text","index":false
-                        },
-                        "countyName":{
-                            "type":"text","index":false
-                        },
-                        "location":{
-                            "type": "geo_point"
-                        }
-
+    <property name="userShop"><![CDATA[{
+        "template": "user-shop-*",
+        "settings": {
+            "number_of_shards": 6,
+            "index.refresh_interval": "5s"
+        },
+        "mappings": {
+            "user_shop": {
+                "properties": {
+                    "uid": {
+                        "type": "long"
+                    },
+                    "sid": {
+                        "type": "long"
+                    },
+                    "act": {
+                        "type": "integer"
+                    },
+                    "time": {
+                        "type": "date",
+                        "format": "epoch_millis"
                     }
                 }
-
             }
-        }]]>
-    </property>
+        }
+    }]]></property>
 
     <property name="updateDocument"><![CDATA[
         {
@@ -434,11 +660,20 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                     {
                           "match_phrase_prefix" : {
                                 "detailName" : {
-                                    "query" : "chen",
+                                    "query" : "$detailName",
                                     "max_expansions" : 10
                                 }
                             }
 
+                    },
+                    {
+                        "geo_distance": {
+                            "distance": "$distance",
+                            "location": {
+                                "lon": "$lon",
+                                "lat": "$lat"
+                            }
+                        }
                     }
                 ]
             }
@@ -446,7 +681,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
     }]]></property>
 
 
-    <property name="searchPinyin1"><![CDATA[{
+    <property name="searchPinyin_query_string"><![CDATA[{
         "size": 100,
         "query": {
             "bool": {
@@ -462,7 +697,88 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
             }
         }
     }]]></property>
+    <property name="searchShopGoodUser"><![CDATA[{
+      "size": 100,
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match_phrase_prefix": {
+                "name": {
+                  "query": "$name",
+                  "max_expansions": 10
+                }
+              }
+            },
+            {
+              "geo_distance": {
+                "distance": "$distance",
+                "location": {
+                  "lon": "$lon",
+                  "lat": "$lat"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }]]></property>
 
-
-
+ <property name="goodParentSearch"><![CDATA[{
+        "sort": [
+            {
+                "_score": {
+                    "order": "desc"
+                }
+            },
+            {
+                "_geo_distance": {
+                    "unit": "km",
+                    "order": "asc",
+                    "location": {
+                        "lon": "115.89352755",
+                        "lat": "28.689578"
+                    }
+                }
+            },
+            {
+                "totalSaleNum": {
+                    "order": "desc"
+                }
+            }
+        ],
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "terms": {
+                            "goodsId": [
+                                "50857",
+                                "50858"
+                            ],
+                            "boost": 6
+                        }
+                    }
+                ],
+                "must": [
+                    {
+                        "term": {
+                            "chnlCode": "EB010"
+                        }
+                    },
+                    {
+                        "has_parent": {
+                            "query": {
+                                "term": {
+                                    "status": 3
+                                }
+                            },
+                            "inner_hits": {},
+                            "type": "shop"
+                        }
+                    }
+                ]
+            }
+        }
+    }]]></property>
 </properties>
