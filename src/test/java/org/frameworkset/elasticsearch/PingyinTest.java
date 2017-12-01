@@ -5,6 +5,9 @@ import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
 import org.frameworkset.elasticsearch.entity.ESDatas;
+import org.frameworkset.elasticsearch.entity.SearchHit;
+import org.frameworkset.elasticsearch.serial.ESInnerHitSerialThreadLocal;
+import org.frameworkset.elasticsearch.serial.ESSerialThreadLocal;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,19 +22,30 @@ public class PingyinTest {
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		try {
-			clientUtil.dropIndice("demo-2017.11.26");
-			String template = clientUtil.deleteTempate("demo_template");
-			System.out.println(template);
-			 template = clientUtil.createTempate("demo_template", "demoTemplate");
-			System.out.println(template);
-//			//获取索引表结构
-//			System.out.println(clientUtil.getIndice("demo"));
-//			//删除索引表结构
-//			System.out.println(clientUtil.dropIndice("demo"));
+			clientUtil.dropIndice("demo-*");
 		} catch (ElasticSearchException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		try {
+			String template = clientUtil.deleteTempate("demo_template");
+			System.out.println(template);
+	} catch (ElasticSearchException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		try {
+			String template = clientUtil.createTempate("demo_template", "demoTemplate");
+			System.out.println(template);
+} catch (ElasticSearchException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		}
+//			//获取索引表结构
+//			System.out.println(clientUtil.getIndice("demo"));
+//			//删除索引表结构
+//			System.out.println(clientUtil.dropIndice("demo"));
+
 //
 //		//创建索引表结构
 //		System.out.println(clientUtil.createIndiceMapping("demo","createDemoIndice"));
@@ -307,9 +321,17 @@ public class PingyinTest {
 	@Test
 	public void updateDocument(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
+
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("cityName","潭市");
+		params.put("standardAddrId","38130122");
+		params.put("detailName","tan市贵溪市花园办事处建设路四冶生活区2-11栋3单元1层101");
+		params.put("location","28.292781,117.238963");
+		params.put("countyName","贵溪市");
+
 		String temp = clientUtil.executeHttp("pboos-map-adress-1503973107/boosmap/38130122/_update",
 				"updateDocument",
-				(Object)null,
+				params,
 				ClientInterface.HTTP_POST);
 		System.out.println(temp);
 
@@ -320,7 +342,6 @@ public class PingyinTest {
 	public void searchPinyinPboos(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		Map<String,String> params = new HashMap<String,String>();
-//		params.put("detailName","红谷滩红角洲");
 		params.put("detailName","海域香廷160栋1单元3层302室");
 		params.put("distance","0.5km");
 		params.put("lon","115.824994");
@@ -353,12 +374,12 @@ public class PingyinTest {
 		params.put("distance","2km");
 		params.put("lon","115.825472");
 		params.put("lat","28.665041");
-//		ESDatas<PboosMap> datas = clientUtil.searchList("pboos-map-adress-1503973107/_search","searchPinyinmatch_phrase_prefix",params,PboosMap.class);
+		ESDatas<Shop> datas = clientUtil.searchList("shop-good-user-1512023940/_search","searchShopGoodUser",params,Shop.class);
 		System.out.print(clientUtil.executeRequest("shop-good-user-1512023940/_search?pretty","searchShopGoodUser",params));
 	}
 
 	@Test
-	public void goodParentSearch(){
+	public void searchGoodParent(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		Map<String,String> params = new HashMap<String,String>();
 //		params.put("detailName","红谷滩红角洲");
@@ -366,8 +387,17 @@ public class PingyinTest {
 		params.put("distance","2km");
 		params.put("lon","115.825472");
 		params.put("lat","28.665041");
-//		ESDatas<PboosMap> datas = clientUtil.searchList("pboos-map-adress-1503973107/_search","searchPinyinmatch_phrase_prefix",params,PboosMap.class);
-		System.out.print(clientUtil.executeRequest("shop-good-user-1512023940/_search?pretty","goodParentSearch",params));
+		try {
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Shop.class);
+			ESSerialThreadLocal.setESTypeReferences(Good.class);
+			ESDatas<SearchHit> datas = clientUtil.searchList("shop-good-user-1512023940/_search","goodParentSearch",params,SearchHit.class);
+			List<Shop> shops = datas.getDatas().get(0).getInnerHits("shop",Shop.class);
+			System.out.print(clientUtil.executeRequest("shop-good-user-1512023940/_search?pretty", "goodParentSearch", params));
+		}
+		finally {
+			ESInnerHitSerialThreadLocal.clean();
+			ESSerialThreadLocal.clean();
+		}
 	}
 
 }

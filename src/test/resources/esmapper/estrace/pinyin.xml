@@ -631,7 +631,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
 
     <property name="updateDocument"><![CDATA[
         {
-			"doc" : {"cityName": "潭市", "standardAddrId": "38130122", "detailName": "tan市贵溪市花园办事处建设路四冶生活区2-11栋3单元1层101", "location": "28.292781,117.238963", "countyName": "贵溪市"}
+			"doc" : {"cityName": #[cityName], "standardAddrId": #[standardAddrId], "detailName": #[detailName], "location": #[location], "countyName": #[countyName]}
 		}
     ]]></property>
 
