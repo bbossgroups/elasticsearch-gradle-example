@@ -158,7 +158,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                     "analyzer" : {
                         "pinyin_analyzer": {
                             "type": "custom",
-                            "tokenizer": "ik_smart",
+                            "tokenizer": "standard",
                             "filter": ["my_pinyin", "word_delimiter"]
                         }
                     },

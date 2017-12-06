@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class PingyinTest {
 	@Test
@@ -154,7 +158,7 @@ public class PingyinTest {
 
 
 	@Test
-	public void createShopGoodUserPinyinTemplate(){
+	public void createShopGoodUserPinyinTemplate() throws IOException {
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		try {
 
@@ -176,7 +180,7 @@ public class PingyinTest {
 
 		try {
 
-//			clientUtil.dropIndice("shop-good-user-1512023940");
+			clientUtil.dropIndice("shop-good-user-1512023940");
 //			//获取索引表结构
 //			System.out.println(clientUtil.getIndice("demo"));
 //			//删除索引表结构
@@ -185,6 +189,7 @@ public class PingyinTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.importShopGood();
 	}
 
 	@Test
@@ -257,15 +262,41 @@ public class PingyinTest {
 			e.printStackTrace();
 		}
 	}
+
 	@Test
 	public void importPboosMapDatas() throws IOException {
 
+		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		File maps = new File("F:\\4_ASIA文档\\1_项目\\13_江西移动\\拼音搜索\\maps");
 		File[] mapFiles = maps.listFiles();
+		 List<Future> fs = new ArrayList<>();
 		for(File mapFile:mapFiles){
-			String data = FileUtil.getFileContent(mapFile,"UTF-8");
-			ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
-			String temp = clientUtil.executeHttp("_bulk",data, ClientUtil.HTTP_POST);
+			final File f = mapFile;
+			fs.add(executorService.submit(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						String data = FileUtil.getFileContent(f, "UTF-8");
+						ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+						String temp = clientUtil.executeHttp("_bulk", data, ClientUtil.HTTP_POST);
+					}
+					catch (Exception e){
+
+					}
+
+				}
+			}));
+
+		}
+
+		for (Future f:fs){
+			try {
+				f.get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
 
 
@@ -370,7 +401,8 @@ public class PingyinTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		Map<String,String> params = new HashMap<String,String>();
 //		params.put("detailName","红谷滩红角洲");
-		params.put("name","xiahaotang");
+		params.put("name","xia壕塘15");
+//		params.put("name","下壕塘15");
 		params.put("distance","2km");
 		params.put("lon","115.825472");
 		params.put("lat","28.665041");
