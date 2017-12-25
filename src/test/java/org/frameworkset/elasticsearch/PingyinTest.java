@@ -162,6 +162,17 @@ public class PingyinTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		try {
 
+			clientUtil.dropIndice("shop-good-user-1512023940");
+//			//获取索引表结构
+//			System.out.println(clientUtil.getIndice("demo"));
+//			//删除索引表结构
+//			System.out.println(clientUtil.dropIndice("demo"));
+		} catch (ElasticSearchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+
 			String template = clientUtil.deleteTempate("shopgooduserpinyintemplate");
 			System.out.println(template);
 
@@ -178,17 +189,7 @@ public class PingyinTest {
 			e.printStackTrace();
 		}
 
-		try {
 
-			clientUtil.dropIndice("shop-good-user-1512023940");
-//			//获取索引表结构
-//			System.out.println(clientUtil.getIndice("demo"));
-//			//删除索引表结构
-//			System.out.println(clientUtil.dropIndice("demo"));
-		} catch (ElasticSearchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		this.importShopGood();
 	}
 

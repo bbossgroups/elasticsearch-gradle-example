@@ -150,7 +150,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
 
     <property name="shopGoodUserPinyinTemplate">
         <![CDATA[{
-            "template": "shop-good-user-*",
+            "index_patterns": "shop-good-user-*",
             "settings": {
                 "number_of_shards": 6,
                 "index.refresh_interval": "5s",
@@ -468,7 +468,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
 
     <property name="pboosMapAdressPinyinTemplate">
         <![CDATA[{
-            "template": "pboos-map-adress-*",
+            "index_patterns": "pboos-map-adress-*",
             "settings": {
                 "number_of_shards": 6,
                 "index.refresh_interval": "5s",
@@ -537,7 +537,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
 
     <property name="pboosMapAdressTemplate">
         <![CDATA[{
-            "template": "pboos-map-adress-*",
+            "index_patterns": "pboos-map-adress-*",
             "settings": {
                 "number_of_shards": 6,
                 "index.refresh_interval": "5s",
@@ -603,7 +603,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
         }]]>
     </property>
     <property name="userShop"><![CDATA[{
-        "template": "user-shop-*",
+        "index_patterns": "user-shop-*",
         "settings": {
             "number_of_shards": 6,
             "index.refresh_interval": "5s"
