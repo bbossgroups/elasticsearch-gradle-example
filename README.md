@@ -1,4 +1,18 @@
-#bboss elastic demo
+# bboss elastic demo，包含以下示例
+拼音搜索示例
+
+地理位置检索示例
+
+聚合统计查询示例
+
+普通es 增删改、批量增删改、全文检索orm示例
+
+父子关系检索示例
+
+关键词高亮显示示例
+
+关键词联想和补全示例
+
 # 使用参考文档
 bboss elasticsearch开发库使用介绍
 
