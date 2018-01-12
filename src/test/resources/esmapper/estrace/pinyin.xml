@@ -660,7 +660,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                     {
                           "match_phrase_prefix" : {
                                 "detailName" : {
-                                    "query" : "$detailName",
+                                    "query" : #[detailName],
                                     "max_expansions" : 10
                                 }
                             }
@@ -668,10 +668,10 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                     },
                     {
                         "geo_distance": {
-                            "distance": "$distance",
+                            "distance": #[distance],
                             "location": {
-                                "lon": "$lon",
-                                "lat": "$lat"
+                                "lon": #[lon],
+                                "lat": #[lat]
                             }
                         }
                     }
@@ -688,7 +688,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                 "must": [
                  {
                     "query_string": {
-                        "query": "$detailName",
+                        "query": #[detailName],
                         "analyze_wildcard": true,
                         "fields": ["detailName"]
                     }
@@ -705,17 +705,17 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
             {
               "match_phrase_prefix": {
                 "name": {
-                  "query": "$name",
+                  "query": #[name],
                   "max_expansions": 10
                 }
               }
             },
             {
               "geo_distance": {
-                "distance": "$distance",
+                "distance": #[distance],
                 "location": {
-                  "lon": "$lon",
-                  "lat": "$lat"
+                  "lon": #[lon],
+                  "lat": #[lat]
                 }
               }
             }
