@@ -21,7 +21,7 @@ bboss elasticsearch开发库使用介绍
 https://my.oschina.net/bboss/blog/1556866
 
 # 构建部署
-前提：安装和配置好最新的gradle版本，下载源码
+前提：安装gradle
 ## 通过gradle构建发布版本
 
 gradle clean releaseVersion
