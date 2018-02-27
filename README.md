@@ -37,4 +37,10 @@ chmod +x startup.sh
 
 windows: startup.bat
 
+## bboss elasticsearch技术交流群:166471282 
+     
+## bboss elasticsearch微信公众号:bbossgroup
+   
+   ![GitHub Logo](https://static.oschina.net/uploads/space/2017/0617/094201_QhWs_94045.jpg)
+
 
