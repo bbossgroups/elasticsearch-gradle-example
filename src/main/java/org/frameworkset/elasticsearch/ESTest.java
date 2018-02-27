@@ -2,6 +2,7 @@ package org.frameworkset.elasticsearch;
 
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.client.ResultUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
 import org.frameworkset.elasticsearch.entity.ESDatas;
 import org.frameworkset.elasticsearch.entity.JsonDataResult;
@@ -41,7 +42,7 @@ public class ESTest {
 
 		if(queryCondition != null){
 
-			queryCondition = ClientUtil.handleElasticSearchSpecialChars(queryCondition);
+			queryCondition = ResultUtil.handleElasticSearchSpecialChars(queryCondition);
 //            queryCondition = queryCondition.replace("-","\\\\-");
 			//queryCondition = ClientUtil.handleElasticSearchSpecialChars(queryCondition);
 		}
