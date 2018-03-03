@@ -326,4 +326,77 @@ public class ESTest {
 				Demo.class);
 	}
 
+
+	public void testAddDocument() throws ParseException{
+		testGetmapping();
+
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		Demo demo = new Demo();
+		demo.setDemoId(5l);
+		demo.setAgentStarttime(new Date());
+		demo.setApplicationName("blackcatdemo");
+		demo.setContentbody("this is content body");
+		//创建文档
+		String response = clientUtil.addDocument("demo",//索引表,自动添加日期信息到索引表名称中
+				"demo",//索引类型
+				"createDemoDocument",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
+				demo);
+
+		System.out.println("addDateDocument-------------------------");
+		System.out.println(response);
+
+		response = clientUtil.getDocument("demo",//索引表
+				"demo",//索引类型
+				"5");
+		System.out.println("getDocument-------------------------");
+		System.out.println(response);
+
+		demo = clientUtil.getDocument("demo",//索引表
+				"demo",//索引类型
+				"5",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
+				Demo.class);
+	}
+
+
+	public void testBulkAddDocument() throws ParseException{
+		testGetmapping();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+		String date = format.format(new Date());
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		List<Demo> demos = new ArrayList<>();
+		Demo demo = new Demo();
+		demo.setDemoId(2l);
+		demo.setAgentStarttime(new Date());
+		demo.setApplicationName("blackcatdemo2");
+		demo.setContentbody("this is content body2");
+		demos.add(demo);
+
+		demo = new Demo();
+		demo.setDemoId(3l);
+		demo.setAgentStarttime(new Date());
+		demo.setApplicationName("blackcatdemo3");
+		demo.setContentbody("this is content body3");
+		demos.add(demo);
+
+		//创建模板
+		String response = clientUtil.addDateDocuments("demo",//索引表
+				"demo",//索引类型
+				"createDemoDocument",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
+				demos);
+
+		System.out.println("addDateDocument-------------------------");
+		System.out.println(response);
+
+		response = clientUtil.getDocument("demo-"+date,//索引表
+				"demo",//索引类型
+				"2");
+		System.out.println("getDocument-------------------------");
+		System.out.println(response);
+
+		demo = clientUtil.getDocument("demo-"+date,//索引表
+				"demo",//索引类型
+				"3",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
+				Demo.class);
+	}
+
 }

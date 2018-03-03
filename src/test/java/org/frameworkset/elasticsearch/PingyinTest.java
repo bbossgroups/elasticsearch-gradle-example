@@ -148,6 +148,52 @@ public class PingyinTest {
 				Demo.class);
 	}
 
+
+
+
+	@Test
+	public void testBulkAddDocument1() throws ParseException {
+//		testCreateDemoMapping();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+		String date = format.format(new Date());
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+		List<Demo> demos = new ArrayList<>();
+		Demo demo = new Demo();
+		demo.setDemoId(12l);
+		demo.setAgentStarttime(new Date());
+		demo.setApplicationName("blackcatdemo2");
+		demo.setContentbody("this is content body2");
+		demo.setName("liu德华");
+		demos.add(demo);
+
+		demo = new Demo();
+		demo.setDemoId(13l);
+		demo.setAgentStarttime(new Date());
+		demo.setApplicationName("blackcatdemo3");
+		demo.setContentbody("四大天王，这种文化很好，中华人民共和国");
+		demo.setName("zhang学友");
+		demos.add(demo);
+
+		//创建模板
+		String response = clientUtil.addDateDocuments("demo",//索引表
+				"demo",//索引类型
+				demos);
+
+		System.out.println("addDateDocument-------------------------");
+		System.out.println(response);
+
+		response = clientUtil.getDocument("demo-"+date,//索引表
+				"demo",//索引类型
+				"12");
+		System.out.println("getDocument-------------------------");
+		System.out.println(response);
+
+		demo = clientUtil.getDocument("demo-"+date,//索引表
+				"demo",//索引类型
+				"13",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
+				Demo.class);
+	}
+
 	@Test
 	public void testGetMapping(){
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
