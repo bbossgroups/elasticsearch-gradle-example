@@ -1,5 +1,14 @@
 package org.frameworkset.elasticsearch;
 
+import org.frameworkset.elasticsearch.client.ClientInterface;
+import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.client.ResultUtil;
+import org.frameworkset.elasticsearch.entity.*;
+import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
+import org.frameworkset.elasticsearch.handler.ElasticSearchResponseHandler;
+import org.frameworkset.spi.remote.http.MapResponseHandler;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -7,21 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.frameworkset.elasticsearch.client.ClientInterface;
-import org.frameworkset.elasticsearch.client.ClientUtil;
-import org.frameworkset.elasticsearch.client.ResultUtil;
-import org.frameworkset.elasticsearch.entity.ESAggDatas;
-import org.frameworkset.elasticsearch.entity.ESDatas;
-import org.frameworkset.elasticsearch.entity.ESIndice;
-import org.frameworkset.elasticsearch.entity.JsonDataResult;
-import org.frameworkset.elasticsearch.entity.LongAggRangeHit;
-import org.frameworkset.elasticsearch.entity.MapRestResponse;
-import org.frameworkset.elasticsearch.entity.MapSearchHit;
-import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
-import org.frameworkset.elasticsearch.entity.Traces;
-import org.frameworkset.spi.remote.http.MapResponseHandler;
-import org.junit.Test;
 
 public class TraceESDaoTest {
 	@Test
@@ -136,7 +130,11 @@ public class TraceESDaoTest {
 		System.out.println(traceESDao.queryTracesMapping("tracesql-2017.09.15"));
 //		http://127.0.0.1:9200/productindex/_mapping?pretty
 	}
-
+	@Test
+	public void testDropMonitorData(){
+		ClientInterface clientInterface = ElasticSearchHelper.getRestClientUtil();
+		clientInterface.cleanAllXPackIndices();
+	}
 	@Test
 	public void testDropDocMapping(){
 		TraceESDao traceESDao = new TraceESDao();
@@ -236,6 +234,16 @@ public class TraceESDaoTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		MapSearchHit hit = clientUtil.getDocumentHit(indexName,indexType,id);
 		System.out.println("");
+	}
+@Test
+
+	public void testaaa(){
+	ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/ESTracesMapper.xml");
+		String ddd = clientUtil.executeRequest("/trace-*/_search","testaaa",(Object)null);
+
+
+		RestResponse result = clientUtil.executeRequest("/trace-*/_search","testaaa",(Object)null,  new ElasticSearchResponseHandler( TraceScatter.class));
+	System.out.println(ddd);
 	}
 
 	@Test

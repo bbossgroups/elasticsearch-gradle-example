@@ -3,6 +3,38 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-term-query
 https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-query.html
 -->
 <properties>
+    <property name="testaaa">
+        <![CDATA[
+            {
+
+            "sort": [
+                {"startTime": "desc"},
+                {"_uid": "desc"}
+            ],
+            "_source": [ "startTime", "elapsed","err" ],
+                        "size":10000,
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "term": {
+                                "applicationName.keyword": "pdp"
+                            }
+                        },
+                        {
+                            "range": {
+                                "startTime": {
+                                    "gte": 1520407911063,
+                                    "lt": 1520409111063
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        ]]>
+    </property>
     <property name="queryTracesByCriteria">
         <![CDATA[{
 

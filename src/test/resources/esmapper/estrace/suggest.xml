@@ -6,72 +6,22 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggester
 -->
 <properties>
     <!--创建索引结构-->
-    <property name="createSuggestIndice">
+    <property name="createCompleteSuggestBookIndice">
         <![CDATA[{
-            "settings": {
-                "number_of_shards": 6,
-                "index.refresh_interval": "5s",
-                "analysis" : {
-                    "analyzer" : {
-                        "pinyin_analyzer" : {
-                            "tokenizer" : "my_pinyin"
-                            }
-                    },
-                    "tokenizer" : {
-                        "my_pinyin" : {
-                            "type" : "pinyin",
-                            "keep_separate_first_letter" : false,
-                            "keep_full_pinyin" : true,
-                            "keep_original" : true,
-                            "limit_first_letter_length" : 16,
-                            "lowercase" : true,
-                            "remove_duplicated_term" : true
-                        }
-                    }
-                }
-            },
             "mappings": {
-                "suggest": {
-                    "properties": {
-                        "contentbody": {
-                            "type": "text",
-                            "term_vector": "with_positions_offsets",
-                            "analyzer": "ik_max_word",
-                            "search_analyzer": "ik_max_word",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword"
-
-                                }
-                            }
+                "book" : {
+                    "properties" : {
+                        "suggest" : {
+                            "type" : "completion"
                         },
-                        "agentStarttime": {
-                            "type": "date",
-                            "format":"yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||epoch_millis"
+                        "title" : {
+                            "type": "keyword"
                         },
-                        "applicationName": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword"
-                                }
-                            }
+                        "message" : {
+                            "type": "text"
                         },
-                        "name": {
-                            "type": "keyword",
-                            "fields": {
-                                "pinyin": {
-                                    "type": "text",
-                                    "store": false,
-                                    "term_vector": "with_offsets",
-                                    "analyzer": "pinyin_analyzer",
-                                    "boost": 10
-                                },
-                                "suggest": {
-                                    "type": "completion",
-                                    "analyzer": "pinyin_analyzer"
-                                }
-                            }
+                        "user" : {
+                            "type": "text"
                         }
                     }
                 }
@@ -79,77 +29,116 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggester
         }]]>
     </property>
 
-    <property name="doComplete"><![CDATA[{
-         "_source": "name",
-        "suggest": {
-            "song-suggest" : {
-                "prefix" : "$prefix",
-                "completion" : {
-                    "field" : "name.suggest",
-                    "size": 10
+    <property name="createPhraseTestIndice">
+        <![CDATA[{
+          "settings": {
+            "index": {
+              "number_of_shards": 1,
+              "analysis": {
+                "analyzer": {
+                  "trigram": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["standard", "shingle"]
+                  },
+                  "reverse": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["standard", "reverse"]
+                  }
+                },
+                "filter": {
+                  "shingle": {
+                    "type": "shingle",
+                    "min_shingle_size": 2,
+                    "max_shingle_size": 3
+                  }
                 }
+              }
             }
-        }
-    }]]></property>
-
-    <property name="doTerm"><![CDATA[{
-        "suggest": {
-            "my-suggestion": {
-                "text": "$prefix",
-                "term": {
-                    "suggest_mode": "missing",
-                    "field": "contentbody"
+          },
+          "mappings": {
+            "test": {
+              "properties": {
+                "title": {
+                  "type": "text",
+                  "fields": {
+                    "trigram": {
+                      "type": "text",
+                      "analyzer": "trigram"
+                    },
+                    "reverse": {
+                      "type": "text",
+                      "analyzer": "reverse"
+                    }
+                  }
                 }
-            }
-        }
-    }]]></property>
-
-
-    <property name="doPhrase"><![CDATA[{
-      "suggest": {
-        "my-suggestion": {
-          "text": "$prefix",
-          "phrase": {
-            "field": "contentbody",
-            "highlight": {
-              "pre_tag": "<em>",
-              "post_tag": "</em>"
+              }
             }
           }
-        }
-      }
-    }]]></property>
+        }]]>
+    </property>
 
-
-
-    <property name="pinyinQuery">
+    <property name="phraseSearch">
         <![CDATA[{
-
-            "sort": [
-                {"startTime": "desc"},
-                {"_uid": "desc"}
-            ],
-
-
-            "size":100,
-            "query": {
-                "bool": {
-                    "filter": [
-                        {
-                            "term": {
-                                "applicationName.keyword": "$application"
-                            }
-                        },
-                        {
-                            "range": {
-                                "startTime": {
-                                    "gte": $startTime,
-                                    "lt": $endTime
-                                }
-                            }
-                        }
-                    ]
+          "suggest": {
+            "text": "noble prize",
+            "simple_phrase": {
+              "phrase": {
+                "field": "title.trigram",
+                "size": 1,
+                "gram_size": 3,
+                "direct_generator": [ {
+                  "field": "title.trigram",
+                  "suggest_mode": "always"
+                } ],
+                "highlight": {
+                  "pre_tag": "<em>",
+                  "post_tag": "</em>"
                 }
+              }
+            }
+          }
+        }]]>
+    </property>
+
+    <property name="termSearch">
+        <![CDATA[{
+          "suggest": {
+            "text" : "tring out Elasticsearch",
+            "my-suggest-1" : {
+              "term" : {
+                "field" : "message"
+              }
+            },
+            "my-suggest-2" : {
+               "term" : {
+                "field" : "user"
+               }
+            }
+          }
+        }]]>
+    </property>
+
+    <property name="complateSuggestSearch">
+        <![CDATA[{
+            "_source": "suggest",
+            "suggest": {
+                "book-suggest" : {
+                    "prefix" : "go",
+
+                    "completion" : {
+                        "field" : "suggest"
+                    }
+                }
+            }
+        }]]>
+    </property>
+
+    <property name="count">
+        <![CDATA[{
+            "query" : {
+                "term" : { "title" : "go编程思想" }
             }
         }]]>
     </property>
