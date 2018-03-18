@@ -13,7 +13,7 @@
 
 关键词高亮显示示例
 
-关键词联想和补全示例
+关键词联想和补全示例（term suggest，phrase suggest，complete suggest）
 
 # 使用参考文档
 bboss elasticsearch开发库使用介绍
