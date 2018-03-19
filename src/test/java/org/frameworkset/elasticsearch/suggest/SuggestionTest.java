@@ -1,17 +1,17 @@
 package org.frameworkset.elasticsearch.suggest;
 
+import com.frameworkset.util.SimpleStringUtil;
 import org.frameworkset.elasticsearch.ElasticSearchException;
 import org.frameworkset.elasticsearch.ElasticSearchHelper;
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.MapRestResponse;
-import org.frameworkset.elasticsearch.entity.suggest.CompleteRestResponse;
-import org.frameworkset.elasticsearch.entity.suggest.SuggestInput;
-import org.frameworkset.elasticsearch.entity.suggest.TermRestResponse;
+import org.frameworkset.elasticsearch.entity.suggest.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SuggestionTest {
 	@Test
@@ -126,6 +126,7 @@ public class SuggestionTest {
 		System.out.println(response);
 
 		CompleteRestResponse book = clientUtil.complateSuggest("book/_search", "complateSuggestSearch",Book.class) ;
+		Map<String, List<CompleteSuggest>> completeSuggests = book.getSuggests();
 		System.out.println();
 	}
 
@@ -139,6 +140,7 @@ public class SuggestionTest {
 		System.out.println(response);
 
 		TermRestResponse book = clientUtil.termSuggest("book/_search", "termSearch") ;
+		Map<String, List<TermSuggest>> termSuggests = book.getSuggests();
 		System.out.println();
 	}
 
@@ -147,5 +149,11 @@ public class SuggestionTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/suggest.xml");
 		MapRestResponse response = clientUtil.search("book/_count?pretty", "count") ;
 		System.out.println(response);
+	}
+
+	@Test
+	public void testJsonNull(){
+		TestVO testVO = new TestVO();
+		System.out.println(SimpleStringUtil.object2json(testVO));
 	}
 }

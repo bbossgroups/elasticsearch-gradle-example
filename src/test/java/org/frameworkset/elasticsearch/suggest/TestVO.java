@@ -14,9 +14,22 @@ package org.frameworkset.elasticsearch.suggest;/*
  *  limitations under the License.
  */
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestVO {
 
 	private String title;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	private String name;
 
 	public String getTitle() {
 		return title;

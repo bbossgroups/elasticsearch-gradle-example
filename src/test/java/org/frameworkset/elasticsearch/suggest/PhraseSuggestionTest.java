@@ -5,10 +5,12 @@ import org.frameworkset.elasticsearch.ElasticSearchHelper;
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.suggest.PhraseRestResponse;
+import org.frameworkset.elasticsearch.entity.suggest.PhraseSuggest;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PhraseSuggestionTest {
 	@Test
@@ -65,6 +67,7 @@ public class PhraseSuggestionTest {
 		System.out.println(response);
 
 		PhraseRestResponse book = clientUtil.phraseSuggest("test/_search", "phraseSearch") ;
+		Map<String, List<PhraseSuggest>> phraseSuggests = book.getSuggests();
 		System.out.println();
 	}
 
