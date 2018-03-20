@@ -148,7 +148,7 @@ public class SuggestionTest {
 	public void testCount(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/suggest.xml");
 		MapRestResponse response = clientUtil.search("book/_count?pretty", "count") ;
-		System.out.println(response);
+		System.out.println(response.getCount());
 	}
 
 	@Test
