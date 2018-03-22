@@ -433,11 +433,14 @@ public class PingyinTest {
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		Map<String,String> params = new HashMap<String,String>();
 //		params.put("detailName","红谷滩红角洲");
-		params.put("detailName","huayuan");
+		params.put("detailName","\\");
 		params.put("distance","0.5km");
 		params.put("lon","117.101757");
 		params.put("lat","28.284787");
-		ESDatas<PboosMap> datas = clientUtil.searchList("pboos-map-adress-1503973107/_search","searchPinyinmatch_phrase_prefix",params,PboosMap.class);
+		ESDatas<PboosMap> datas = clientUtil.searchList("pboos-map-adress-1503973107/_search",
+				"searchPinyinmatch_phrase_prefix",
+				params,
+				PboosMap.class);
 		System.out.print(clientUtil.executeRequest("pboos-map-adress-1503973107/_search","searchPinyinmatch_phrase_prefix",params));
 	}
 

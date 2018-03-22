@@ -1,0 +1,36 @@
+<!--
+GET /_mget
+{
+            "docs" : [
+                {
+                    "_index" : "agentinfo",
+                    "_type" : "agentinfo",
+                    "_id" : "10.21.20.168"
+                },
+                {
+                     "_index" : "agentinfo",
+                    "_type" : "agentinfo",
+                    "_id" : "192.168.0.143"
+                }
+            ]
+        }
+-->
+<property name="testMget">
+    <![CDATA[
+
+        {
+            "docs" : [
+                {
+                    "_index" : "agentinfo",
+                    "_type" : "agentinfo",
+                    "_id" : "10.21.20.168"
+                },
+                {
+                     "_index" : "agentinfo",
+                    "_type" : "agentinfo",
+                    "_id" : "192.168.0.143"
+                }
+            ]
+        }
+        ]]>
+</property>
