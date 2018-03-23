@@ -1,0 +1,20 @@
+<properties>
+    <!--
+    POST test/_doc/1/_update
+         {
+             "doc" : {
+             "name" : "new_name"
+             }
+         }
+    -->
+    <property name="updateAgentInfoEndtime">
+        <![CDATA[
+         {
+             "doc" : {
+                "endTimestamp" : #[eventTimestamp],
+                "endTimestampDate" : #[eventTimestampDate]
+             }
+         }
+        ]]>
+    </property>
+</properties>
