@@ -22,7 +22,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestUpdate {
-	private ClientInterface configRestClientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/agentstat.xml");
+
+	@Test
+	public void testPartitionUpdateWithDSL(){
+		ClientInterface configRestClientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/agentstat.xml");
+		Map params = new HashMap();
+		Date date = new Date();
+		params.put("eventTimestamp",date.getTime());
+		params.put("eventTimestampDate",date);
+		/**
+		 * 采用dsl更新索引部分内容,dsl定义和路径api可以参考文档：
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html
+		 */
+		StringBuilder path = new StringBuilder();
+		path.append("agentinfo/agentinfo/pdpagent/_update?refresh");//自行拼接rest api地址
+		configRestClientUtil.updateByPath(path.toString(),
+										"updateAgentInfoEndtime",//更新文档内容的dsl配置名称
+				                         params);
+	}
+
 	@Test
 	public void testPartitionUpdate(){
 		Map params = new HashMap();
@@ -32,9 +50,12 @@ public class TestUpdate {
 		/**
 		 * 更新索引部分内容
 		 */
-		StringBuilder path = new StringBuilder();
-		path.append("agentinfo/agentinfo/pdpagent/_update?refresh");
-		configRestClientUtil.updateByPath(path.toString(),
-				"updateAgentInfoEndtime",params);
+		ClientInterface restClientUtil = ElasticSearchHelper.getRestClientUtil();
+		String response = restClientUtil.updateDocument("agentinfo",//索引表名称
+														"agentinfo",//索引type
+														"pdpagent",//索引id
+														 params,//待更新的索引字段信息
+														"refresh");//强制刷新索引
+		System.out.println(response);
 	}
 }

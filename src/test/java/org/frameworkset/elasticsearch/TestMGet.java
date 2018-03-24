@@ -16,18 +16,62 @@ package org.frameworkset.elasticsearch;/*
 
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.serial.SerialUtil;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TestMGet {
 	@Test
-	public void testMget(){
+	public void testMgetWithDSL(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/mget.xml");
-		String response = clientUtil.executeHttp("_mget","testMget", ClientUtil.HTTP_POST);
+		//通过执行dsl获取多个文档的内容
+		List<String> ids = new ArrayList<String>();
+		ids.add("10.21.20.168");
+		ids.add("192.168.0.143");
+		Map params = new HashMap();
+		params.put("ids",ids);
+		String response = clientUtil.executeHttp("_mget",
+												 "testMget",//dsl定义名称
+												 params, //存放文档id的参数
+				                                 ClientUtil.HTTP_POST);
 		System.out.println(response);
-		List<Map> docs = clientUtil.mgetDocuments("_mget","testMget",Map.class);
+		List<Map> docs = clientUtil.mgetDocuments("_mget",
+												"testMget",//dsl定义名称
+												 params, //存放文档id的参数
+												 Map.class);//返回文档对象类型
 		System.out.println(docs);
+	}
+
+	@Test
+	public void testMget(){
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+		//获取json报文
+		String response = clientUtil.mgetDocuments("agentinfo",//索引表
+				                                   "agentinfo",//索引表类型
+				                                   "10.21.20.168","192.168.0.143");//文档id清单，如果是数字类型，请用Integer之类的封装对象
+		System.out.println(response);
+		//获取封装成对象的文档列表，此处是Map对象，还可以是其他用户定义的对象类型
+		List<Map> docs = clientUtil.mgetDocuments("agentinfo",//索引表
+					                              "agentinfo",//索引表类型
+				                                   Map.class,//返回文档对象类型
+				                                   "10.21.20.168","192.168.0.143");//文档id清单
+		System.out.println(docs);
+	}
+
+
+	private void ser(Object... ids){
+		System.out.println(SerialUtil.object2json(ids));
+	}
+
+	@Test
+	public void testSon(){
+		ser("1","2");
+		ser("1");
+		ser(1,3);
+		ser(new Integer[]{new Integer(1),new Integer(3)});
 	}
 }
