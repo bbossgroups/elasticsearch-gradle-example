@@ -1,0 +1,29 @@
+<properties>
+    <!--
+    POST test/_doc/1/_update
+         {
+             "doc" : {
+             "name" : "new_name"
+             }
+         }
+    -->
+    <property name="scrollQuery">
+        <![CDATA[
+         {
+           #*
+           "slice": {
+                "id": 0,
+                "max": 2
+            },
+           *#
+           ## 这里都是用常量在操作，实际场景中可以参数化变量
+            "size":1000,
+            "query": {
+                "term" : {
+                    "gc.jvmGcOldCount" : 3
+                }
+            }
+        }
+        ]]>
+    </property>
+</properties>
