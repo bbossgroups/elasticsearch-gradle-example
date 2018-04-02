@@ -165,8 +165,8 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
     </property>
 
     <property name="traceTemplate">
-        <![CDATA[{  trace-2017.11.25 trace-2017.11.26   trace-*
-            "template": "trace-*",
+        <![CDATA[{
+            "template": "trace-*", ## after es 6+ this should be "index_patterns": "trace-*",
             "settings": {
                 "number_of_shards": 6,
                 "index.refresh_interval": "5s"
