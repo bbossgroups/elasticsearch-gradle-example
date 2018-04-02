@@ -152,11 +152,11 @@ public class TestScrollQuery {
 		//scroll slice分页检索
 		final int max = 6;
 
-		final CountDownLatch countDownLatch = new CountDownLatch(6);
+		final CountDownLatch countDownLatch = new CountDownLatch(max);//线程任务完成计数器，每个线程对应一个sclice,每运行完一个slice任务,countDownLatch计数减去1
 
 		for (int j = 0; j < max; j++) {
 			final int i = j;
-			Thread sliceThread = new Thread(new Runnable() {//多线程并行执行scroll操作做
+			Thread sliceThread = new Thread(new Runnable() {//多线程并行执行scroll操作做，每个线程对应一个sclice
 
 				@Override
 				public void run() {
@@ -166,7 +166,7 @@ public class TestScrollQuery {
 					params.put("size", 100);//每页100条记录
 					ESDatas<Map> sliceResponse = clientUtil.searchList("agentstat-*/_search?scroll=1m", "scrollSliceQuery", params,Map.class);
 					List<Map> sliceDatas = sliceResponse.getDatas();
-					incrementSize( sliceDatas.size());
+					incrementSize( sliceDatas.size());//统计实际处理的文档数量
 					long totalSize = sliceResponse.getTotalSize();
 					String scrollId = sliceResponse.getScrollId();
 					if (scrollId != null)
@@ -183,7 +183,7 @@ public class TestScrollQuery {
 							if (sliceDatas == null || sliceDatas.size() == 0) {
 								break;
 							}
-							incrementSize( sliceDatas.size());
+							incrementSize( sliceDatas.size());//统计实际处理的文档数量
 						} while (true);
 					}
 					countDownLatch.countDown();
