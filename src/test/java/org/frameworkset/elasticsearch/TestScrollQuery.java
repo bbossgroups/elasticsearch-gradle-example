@@ -81,45 +81,40 @@ public class TestScrollQuery {
 	 */
 	@Test
 	public void testSliceScroll() {
-		final ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/scroll.xml");
-		final List<String> scrollIds = new ArrayList<>();
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/scroll.xml");
+		List<String> scrollIds = new ArrayList<>();
 		long starttime = System.currentTimeMillis();
 		//scroll slice分页检索
-		final int max = 6;
+		int max = 6;
 		long realTotalSize = 0;
-		for (int j = 0; j < max; j++) {
-			final int i = j;
-//			Thread sliceThread = new Thread(new Runnable() {//多线程并行拉取数据
-//				@Override
-//				public void run() {
-					Map params = new HashMap();
-					params.put("id", i);
-					params.put("max", max);//最多6个slice，不能大于share数
-					params.put("size", 100);//每页100条记录
-					ESDatas<Map> sliceResponse = clientUtil.searchList("agentstat-*/_search?scroll=1m", "scrollSliceQuery", params,Map.class);
-					List<Map> sliceDatas = sliceResponse.getDatas();
-					realTotalSize = realTotalSize + sliceDatas.size();
-					long totalSize = sliceResponse.getTotalSize();
-					String scrollId = sliceResponse.getScrollId();
-					if (scrollId != null)
-						scrollIds.add(scrollId);
-					System.out.println("totalSize:" + totalSize);
-					System.out.println("scrollId:" + scrollId);
-					if (sliceDatas != null && sliceDatas.size() >= 100) {//每页100条记录，迭代scrollid，遍历scroll分页结果
-						do {
-							sliceResponse = clientUtil.searchScroll("1m", scrollId, Map.class);
-							String sliceScrollId = sliceResponse.getScrollId();
-							if (sliceScrollId != null)
-								scrollIds.add(sliceScrollId);
-							sliceDatas = sliceResponse.getDatas();
-							if (sliceDatas == null || sliceDatas.size() == 0) {
-								break;
-							}
-							realTotalSize = realTotalSize + sliceDatas.size();
-						} while (true);
+		for (int i = 0; i < max; i++) {
+			Map params = new HashMap();
+			params.put("id", i);
+			params.put("max", max);//最多6个slice，不能大于share数
+			params.put("size", 100);//每页100条记录
+			ESDatas<Map> sliceResponse = clientUtil.searchList("agentstat-*/_search?scroll=1m",
+					"scrollSliceQuery", params,Map.class);
+			List<Map> sliceDatas = sliceResponse.getDatas();
+			realTotalSize = realTotalSize + sliceDatas.size();
+			long totalSize = sliceResponse.getTotalSize();
+			String scrollId = sliceResponse.getScrollId();
+			if (scrollId != null)
+				scrollIds.add(scrollId);
+			System.out.println("totalSize:" + totalSize);
+			System.out.println("scrollId:" + scrollId);
+			if (sliceDatas != null && sliceDatas.size() >= 100) {//每页100条记录，迭代scrollid，遍历scroll分页结果
+				do {
+					sliceResponse = clientUtil.searchScroll("1m", scrollId, Map.class);
+					String sliceScrollId = sliceResponse.getScrollId();
+					if (sliceScrollId != null)
+						scrollIds.add(sliceScrollId);
+					sliceDatas = sliceResponse.getDatas();
+					if (sliceDatas == null || sliceDatas.size() < 100) {
+						break;
 					}
-//				}
-//			});
+					realTotalSize = realTotalSize + sliceDatas.size();
+				} while (true);
+			}
 		}
 		long endtime = System.currentTimeMillis();
 		System.out.println("耗时："+(endtime - starttime)+",realTotalSize："+realTotalSize);
@@ -135,12 +130,12 @@ public class TestScrollQuery {
 		scrolls = clientUtil.executeHttp("_nodes/stats/indices/search", ClientUtil.HTTP_GET);
 		System.out.println(scrolls);
 	}
-	//用来计算总记录数
+	//用来存放实际slice检索总记录数
 	long realTotalSize ;
+	//辅助方法，用来累计每次scroll获取到的记录数
 	synchronized void incrementSize(int size){
 		this.realTotalSize = this.realTotalSize + size;
 	}
-
 	/**
 	 * 并行方式执行slice scroll操作
 	 */
@@ -151,7 +146,6 @@ public class TestScrollQuery {
 		long starttime = System.currentTimeMillis();
 		//scroll slice分页检索
 		final int max = 6;
-
 		final CountDownLatch countDownLatch = new CountDownLatch(max);//线程任务完成计数器，每个线程对应一个sclice,每运行完一个slice任务,countDownLatch计数减去1
 
 		for (int j = 0; j < max; j++) {
@@ -164,7 +158,8 @@ public class TestScrollQuery {
 					params.put("id", i);
 					params.put("max", max);//最多6个slice，不能大于share数
 					params.put("size", 100);//每页100条记录
-					ESDatas<Map> sliceResponse = clientUtil.searchList("agentstat-*/_search?scroll=1m", "scrollSliceQuery", params,Map.class);
+					ESDatas<Map> sliceResponse = clientUtil.searchList("agentstat-*/_search?scroll=1m",
+							"scrollSliceQuery", params,Map.class);
 					List<Map> sliceDatas = sliceResponse.getDatas();
 					incrementSize( sliceDatas.size());//统计实际处理的文档数量
 					long totalSize = sliceResponse.getTotalSize();
@@ -180,20 +175,20 @@ public class TestScrollQuery {
 							if (sliceScrollId != null)
 								scrollIds.add(sliceScrollId);
 							sliceDatas = sliceResponse.getDatas();
-							if (sliceDatas == null || sliceDatas.size() == 0) {
+							if (sliceDatas == null || sliceDatas.size() < 100) {
 								break;
 							}
 							incrementSize( sliceDatas.size());//统计实际处理的文档数量
 						} while (true);
 					}
-					countDownLatch.countDown();
+					countDownLatch.countDown();//slice检索完毕后计数器减1
 				}
 
 			});
 			sliceThread.start();
 		}
 		try {
-			countDownLatch.await();//等待所有的线程执行完毕
+			countDownLatch.await();//等待所有的线程执行完毕,计数器变成0
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
