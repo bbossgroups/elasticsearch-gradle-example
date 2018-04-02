@@ -10,14 +10,25 @@
     <property name="scrollQuery">
         <![CDATA[
          {
-           #*
+
+            "size":$size,
+            "query": {
+                "term" : {
+                    "gc.jvmGcOldCount" : 3
+                }
+            }
+        }
+        ]]>
+    </property>
+
+    <property name="scrollSliceQuery">
+        <![CDATA[
+         {
            "slice": {
-                "id": 0,
-                "max": 2
+                "id": $id,
+                "max": $max
             },
-           *#
-           ## 这里都是用常量在操作，实际场景中可以参数化变量
-            "size":1000,
+            "size":$size,
             "query": {
                 "term" : {
                     "gc.jvmGcOldCount" : 3
