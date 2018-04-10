@@ -26,6 +26,7 @@ https://github.com/bbossgroups/elasticsearchdemo
 
 ## 通过gradle构建发布版本
 前提：安装gradle
+
 gradle clean releaseVersion
 
 ## 运行
@@ -33,9 +34,13 @@ gradle构建成功后，在build/distributions目录下会生成可以运行的z
 
 
 打开配置文件conf/elasticsearch.properties，修改es地址，es账号和口令：
+
 elasticsearch.rest.hostNames=127.0.0.1:9200
+
 如果启动了elasticsearch认证，修改es账号和口令：
+
 elasticUser=elastic
+
 elasticPassword=changeme
 
 运行demo
