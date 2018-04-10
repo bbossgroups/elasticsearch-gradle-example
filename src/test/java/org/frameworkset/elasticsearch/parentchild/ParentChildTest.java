@@ -60,20 +60,20 @@ public class ParentChildTest {
 		company.setName("London Westminster");
 		company.setCity("London");
 		company.setCountry("UK");
-		company.setCompanyId("london");
+		company.setCompanyId("london");//指定公司_id
 		companies.add(company);
 
 		company = new Company();
 		company.setName("Liverpool Central");
 		company.setCity("Liverpool");
-		company.setCompanyId("liverpool");
+		company.setCompanyId("liverpool");//指定公司_id
 		company.setCountry("UK");
 		companies.add(company);
 
 		company = new Company();
 		company.setName("Champs Élysées");
 		company.setCity("Paris");
-		company.setCompanyId("paris");
+		company.setCompanyId("paris");//指定公司_id
 		company.setCountry("France");
 		companies.add(company);
 		return companies;
@@ -84,40 +84,40 @@ public class ParentChildTest {
 			List<Employee> employees = new ArrayList<Employee>();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Employee employee = new Employee();
-			employee.setCompanyId("london");
-			employee.setEmployeeId(1);
+			employee.setCompanyId("london");//指定parent：公司_id
+			employee.setEmployeeId(1);//指定雇员_id
 			employee.setName("Alice Smith");
 			employee.setHobby("hiking");
 			employee.setBirthday(dateFormat.parse("1970-10-24"));
 			employees.add(employee);
 
 			employee = new Employee();
-			employee.setCompanyId("london");
-			employee.setEmployeeId(2);
+			employee.setCompanyId("london");//指定parent：公司_id
+			employee.setEmployeeId(2);//指定雇员_id
 			employee.setName("Mark Thomas");
 			employee.setHobby("diving");
 			employee.setBirthday(dateFormat.parse("1982-05-16"));
 			employees.add(employee);
 
 			employee = new Employee();
-			employee.setCompanyId("liverpool");
-			employee.setEmployeeId(3);
+			employee.setCompanyId("liverpool");//指定parent：公司_id
+			employee.setEmployeeId(3);//指定雇员_id
 			employee.setName("Barry Smith");
 			employee.setHobby("hiking");
 			employee.setBirthday(dateFormat.parse("1979-04-01"));
 			employees.add(employee);
 
 			employee = new Employee();
-			employee.setCompanyId("paris");
-			employee.setEmployeeId(4);
+			employee.setCompanyId("paris");//指定parent：公司_id
+			employee.setEmployeeId(4);//指定雇员_id
 			employee.setName("Adrien Grand");
 			employee.setHobby("horses");
 			employee.setBirthday(dateFormat.parse("1987-05-11"));
 			employees.add(employee);
 
 			employee = new Employee();
-			employee.setCompanyId("paris");
-			employee.setEmployeeId(5);
+			employee.setCompanyId("paris");//指定parent：公司_id
+			employee.setEmployeeId(5);//指定雇员_id
 			employee.setName("Adrien Green");
 			employee.setHobby("dancing");
 			employee.setBirthday(dateFormat.parse("1977-05-12"));
