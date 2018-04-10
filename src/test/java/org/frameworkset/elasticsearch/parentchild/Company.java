@@ -14,10 +14,16 @@ package org.frameworkset.elasticsearch.parentchild;/*
  *  limitations under the License.
  */
 
+import com.frameworkset.orm.annotation.ESId;
 import org.frameworkset.elasticsearch.entity.ESBaseData;
 
 public class Company extends ESBaseData {
 	private String name;
+	/**
+	 * 将companyId作为索引_id的值
+	 */
+	@ESId
+	private String companyId;
 	private String city;
 	private String country;
 
@@ -43,5 +49,13 @@ public class Company extends ESBaseData {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

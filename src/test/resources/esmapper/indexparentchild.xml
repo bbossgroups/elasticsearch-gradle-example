@@ -36,6 +36,9 @@
                                     "type": "keyword"
                                 }
                             }
+                        },
+                        "companyId": {
+                            "type": "keyword"
                         }
                     }
                 },
@@ -68,6 +71,12 @@
                                     "type": "keyword"
                                 }
                             }
+                        },
+                        "companyId": {
+                            "type": "keyword"
+                        },
+                        "employId": {
+                            "type": "keyword"
                         }
                     }
                 }
@@ -81,11 +90,11 @@
     <property name="bulkImportCompanyData">
         <![CDATA[
             { "index": { "_id": "london" }}
-            { "name": "London Westminster", "city": "London", "country": "UK" }
+            { "name": "London Westminster", "city": "London", "country": "UK" ,"companyId":"london"}
             { "index": { "_id": "liverpool" }}
-            { "name": "Liverpool Central", "city": "Liverpool", "country": "UK" }
+            { "name": "Liverpool Central", "city": "Liverpool", "country": "UK" ,"companyId":"liverpool"}
             { "index": { "_id": "paris" }}
-            { "name": "Champs Élysées", "city": "Paris", "country": "France" }
+            { "name": "Champs Élysées", "city": "Paris", "country": "France","companyId":"paris" }
         ]]>
     </property>
     <!--
@@ -94,15 +103,15 @@
     <property name="bulkImportEmployeeData">
         <![CDATA[
             { "index": { "_id": 1, "parent": "london" }}
-            { "name": "Alice Smith", "birthday": "1970-10-24", "hobby": "hiking" }
+            { "name": "Alice Smith", "birthday": "1970-10-24", "hobby": "hiking" ,"companyId":"london","employeeId":1 }
             { "index": { "_id": 2, "parent": "london" }}
-            { "name": "Mark Thomas", "birthday": "1982-05-16", "hobby": "diving" }
+            { "name": "Mark Thomas", "birthday": "1982-05-16", "hobby": "diving" ,"companyId":"london","employeeId":2}
             { "index": { "_id": 3, "parent": "liverpool" }}
-            { "name": "Barry Smith", "birthday": "1979-04-01", "hobby": "hiking" }
+            { "name": "Barry Smith", "birthday": "1979-04-01", "hobby": "hiking" ,"companyId":"liverpool","employeeId":3}
             { "index": { "_id": 4, "parent": "paris" }}
-            { "name": "Adrien Grand", "birthday": "1987-05-11", "hobby": "horses" }
+            { "name": "Adrien Grand", "birthday": "1987-05-11", "hobby": "horses" ,"companyId":"paris","employeeId":4}
             { "index": { "_id": 5, "parent": "paris" }}
-            { "name": "Adrien Green", "birthday": "1987-05-11", "hobby": "dancing" }
+            { "name": "Adrien Green", "birthday": "1977-05-12", "hobby": "dancing" ,"companyId":"paris","employeeId":5}
         ]]>
     </property>
     <!--出生日期为条件检索公司信息-->

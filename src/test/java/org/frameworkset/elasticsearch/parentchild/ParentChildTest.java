@@ -21,6 +21,8 @@ import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.entity.ESDatas;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +42,106 @@ public class ParentChildTest {
 		clientUtil.createIndiceMapping("company","createCompanyEmployeeIndice");
 	}
 
-	public void importData(){
+	/**
+	 * 通过读取配置文件中的dsl json数据导入雇员和公司数据
+	 */
+	public void importFromJsonData(){
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
 
 		//导入公司数据,并且实时刷新，测试需要，实际环境不要带refresh
 		clientUtil.executeHttp("company/company/_bulk?refresh","bulkImportCompanyData",ClientUtil.HTTP_POST);
 		//导入雇员数据,并且实时刷新，测试需要，实际环境不要带refresh
 		clientUtil.executeHttp("company/employee/_bulk?refresh","bulkImportEmployeeData",ClientUtil.HTTP_POST);
+	}
+
+	private List<Company> buildCompanies(){
+		List<Company> companies = new ArrayList<Company>();
+		Company company = new Company();
+		company.setName("London Westminster");
+		company.setCity("London");
+		company.setCountry("UK");
+		company.setCompanyId("london");
+		companies.add(company);
+
+		company = new Company();
+		company.setName("Liverpool Central");
+		company.setCity("Liverpool");
+		company.setCompanyId("liverpool");
+		company.setCountry("UK");
+		companies.add(company);
+
+		company = new Company();
+		company.setName("Champs Élysées");
+		company.setCity("Paris");
+		company.setCompanyId("paris");
+		company.setCountry("France");
+		companies.add(company);
+		return companies;
+	}
+
+	private List<Employee> buildEmployees()  {
+		try {
+			List<Employee> employees = new ArrayList<Employee>();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Employee employee = new Employee();
+			employee.setCompanyId("london");
+			employee.setEmployeeId(1);
+			employee.setName("Alice Smith");
+			employee.setHobby("hiking");
+			employee.setBirthday(dateFormat.parse("1970-10-24"));
+			employees.add(employee);
+
+			employee = new Employee();
+			employee.setCompanyId("london");
+			employee.setEmployeeId(2);
+			employee.setName("Mark Thomas");
+			employee.setHobby("diving");
+			employee.setBirthday(dateFormat.parse("1982-05-16"));
+			employees.add(employee);
+
+			employee = new Employee();
+			employee.setCompanyId("liverpool");
+			employee.setEmployeeId(3);
+			employee.setName("Barry Smith");
+			employee.setHobby("hiking");
+			employee.setBirthday(dateFormat.parse("1979-04-01"));
+			employees.add(employee);
+
+			employee = new Employee();
+			employee.setCompanyId("paris");
+			employee.setEmployeeId(4);
+			employee.setName("Adrien Grand");
+			employee.setHobby("horses");
+			employee.setBirthday(dateFormat.parse("1987-05-11"));
+			employees.add(employee);
+
+			employee = new Employee();
+			employee.setCompanyId("paris");
+			employee.setEmployeeId(5);
+			employee.setName("Adrien Green");
+			employee.setHobby("dancing");
+			employee.setBirthday(dateFormat.parse("1977-05-12"));
+			employees.add(employee);
+			return employees;
+		}
+		catch (Exception e){
+			return null;
+		}
+	}
+
+	/**
+	 * 通过List集合导入雇员和公司数据
+	 */
+	public void importDataFromBeans()  {
+		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
+
+		//导入公司数据,并且实时刷新，测试需要，实际环境不要带refresh
+		List<Company> companies = buildCompanies();
+		clientUtil.addDocuments("company","company",companies,"refresh");
+
+		//导入雇员数据,并且实时刷新，测试需要，实际环境不要带refresh
+		List<Employee> employees = buildEmployees();
+		clientUtil.addDocuments("company","employee",employees,"refresh");
 	}
 
 	public void hasChildSearchByBirthday(){
@@ -93,12 +188,22 @@ public class ParentChildTest {
 
 	}
 	@Test
-	public void test(){
+	public void testFromBeans(){
 		createIndice();
-		importData();
+		this.importDataFromBeans();
 		hasChildSearchByBirthday();
 		this.hasChildSearchByName();
 		this.hasChildSearchByMinChild();
 		this.hasParentSearchByCountry();
 	}
+	@Test
+	public void testFromJson(){
+		createIndice();
+		importFromJsonData();
+		hasChildSearchByBirthday();
+		this.hasChildSearchByName();
+		this.hasChildSearchByMinChild();
+		this.hasParentSearchByCountry();
+	}
+
 }

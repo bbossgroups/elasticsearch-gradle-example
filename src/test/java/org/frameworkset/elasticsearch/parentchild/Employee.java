@@ -16,6 +16,8 @@ package org.frameworkset.elasticsearch.parentchild;/*
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.frameworkset.orm.annotation.Column;
+import com.frameworkset.orm.annotation.ESId;
+import com.frameworkset.orm.annotation.ESParentId;
 import org.frameworkset.elasticsearch.entity.ESBaseData;
 
 import java.util.Date;
@@ -26,6 +28,10 @@ public class Employee extends ESBaseData {
 	@Column(dataformat = "yyyy-MM-dd")
 	private Date birthday;
 	private String hobby;
+	@ESId
+	private int employeeId;
+	@ESParentId
+	private String companyId;
 
 	public String getName() {
 		return name;
@@ -49,5 +55,23 @@ public class Employee extends ESBaseData {
 
 	public void setHobby(String hobby) {
 		this.hobby = hobby;
+	}
+
+	public int getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(int employeeId) {
+		this.employeeId = employeeId;
+	}
+
+
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }
