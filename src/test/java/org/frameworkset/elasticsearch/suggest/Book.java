@@ -14,13 +14,13 @@ package org.frameworkset.elasticsearch.suggest;/*
  *  limitations under the License.
  */
 
-import com.frameworkset.orm.annotation.PrimaryKey;
+import com.frameworkset.orm.annotation.ESId;
 import org.frameworkset.elasticsearch.entity.suggest.SuggestInput;
 
 import java.util.List;
 
 public class Book {
-	@PrimaryKey
+	@ESId
 	private Long id;
 	private List<SuggestInput> suggest;
 	private String title;
