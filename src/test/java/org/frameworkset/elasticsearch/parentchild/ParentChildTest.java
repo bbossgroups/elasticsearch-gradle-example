@@ -200,14 +200,13 @@ public class ParentChildTest {
 	}
 
 	/**
-	 * 通过公司所在国家检索雇员信息
+	 * 通过公司所在国家检索雇员信息,并返回雇员对应的公司信息
 	 */
 	public void hasParentSearchByCountryReturnParent2ndChildren(){
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
 		Map<String,Object> params = new HashMap<String,Object>();
 		params.put("country","UK");
-
 
 		try {
 			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Company.class);//指定inner 查询雇员类型
