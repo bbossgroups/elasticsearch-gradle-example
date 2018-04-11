@@ -3,6 +3,7 @@ package org.frameworkset.elasticsearch;
 import com.frameworkset.util.FileUtil;
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.client.ResultUtil;
 import org.frameworkset.elasticsearch.entity.Demo;
 import org.frameworkset.elasticsearch.entity.ESDatas;
 import org.frameworkset.elasticsearch.entity.SearchHit;
@@ -473,7 +474,10 @@ public class PingyinTest {
 			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Shop.class);
 			ESSerialThreadLocal.setESTypeReferences(Good.class);
 			ESDatas<SearchHit> datas = clientUtil.searchList("shop-good-user-1512023940/_search","goodParentSearch",params,SearchHit.class);
-			List<Shop> shops = datas.getDatas().get(0).getInnerHits("shop",Shop.class);
+			List<SearchHit> goods = datas.getDatas();
+			for(int i = 0;  i < goods.size(); i ++) {
+				List<Shop> shops = ResultUtil.getInnerHits(goods.get(i).getInnerHits(), "shop", Shop.class);
+			}
 			System.out.print(clientUtil.executeRequest("shop-good-user-1512023940/_search?pretty", "goodParentSearch", params));
 		}
 		finally {

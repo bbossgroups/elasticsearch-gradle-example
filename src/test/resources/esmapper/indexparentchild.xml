@@ -151,6 +151,26 @@
             }
         ]]>
     </property>
+
+    <!--以雇员姓名为条件检索公司信息并返回公司雇员信息-->
+    <property name="hasChildSearchReturnParent2ndChildren">
+        <![CDATA[
+            {
+              "query": {
+                "has_child": {
+                  "type":       "employee",
+                  "score_mode": "max",
+                  "query": {
+                    "match": {
+                      "name": #[name]
+                    }
+                  },
+                  "inner_hits": {}
+                }
+              }
+            }
+        ]]>
+    </property>
     <!--最小员工数为条件检索公司信息-->
     <property name="hasChildSearchByMinChild">
         <![CDATA[
@@ -180,6 +200,25 @@
                       "country": #[country]
                     }
                   }
+                }
+              }
+            }
+        ]]>
+    </property>
+
+    <!--检索员工信息-->
+    <property name="hasParentSearchByCountryReturnParent2ndChildren">
+        <![CDATA[
+            {
+              "query": {
+                "has_parent": {
+                  "type": "company",
+                  "query": {
+                    "match": {
+                      "country": #[country]
+                    }
+                  },
+                  "inner_hits": {}
                 }
               }
             }

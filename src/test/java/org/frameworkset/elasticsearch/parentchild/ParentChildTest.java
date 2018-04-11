@@ -18,7 +18,9 @@ import org.frameworkset.elasticsearch.ElasticSearchException;
 import org.frameworkset.elasticsearch.ElasticSearchHelper;
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
+import org.frameworkset.elasticsearch.client.ResultUtil;
 import org.frameworkset.elasticsearch.entity.ESDatas;
+import org.frameworkset.elasticsearch.serial.ESInnerHitSerialThreadLocal;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -144,6 +146,9 @@ public class ParentChildTest {
 		clientUtil.addDocuments("company","employee",employees,"refresh");
 	}
 
+	/**
+	 * 通过雇员生日检索公司信息
+	 */
 	public void hasChildSearchByBirthday(){
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
@@ -154,7 +159,9 @@ public class ParentChildTest {
 		long totalSize = escompanys.getTotalSize();
 	}
 
-
+	/**
+	 * 通过雇员姓名检索公司信息
+	 */
 	public void hasChildSearchByName(){
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
@@ -165,7 +172,9 @@ public class ParentChildTest {
 		long totalSize = escompanys.getTotalSize();
 
 	}
-
+	/**
+	 * 通过雇员数量检索公司信息
+	 */
 	public void hasChildSearchByMinChild(){
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
@@ -176,7 +185,9 @@ public class ParentChildTest {
 		long totalSize = escompanys.getTotalSize();
 
 	}
-
+	/**
+	 * 通过公司所在国家检索雇员信息
+	 */
 	public void hasParentSearchByCountry(){
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
@@ -185,6 +196,63 @@ public class ParentChildTest {
 		ESDatas<Employee> escompanys = clientUtil.searchList("company/employee/_search","hasParentSearchByCountry",params,Employee.class);
 		List<Employee> companyList = escompanys.getDatas();//获取符合条件的公司
 		long totalSize = escompanys.getTotalSize();
+
+	}
+
+	/**
+	 * 通过公司所在国家检索雇员信息
+	 */
+	public void hasParentSearchByCountryReturnParent2ndChildren(){
+
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("country","UK");
+
+
+		try {
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Company.class);//指定inner 查询雇员类型
+			ESDatas<Employee> escompanys = clientUtil.searchList("company/employee/_search","hasParentSearchByCountryReturnParent2ndChildren",params,Employee.class);
+			List<Employee> employeeList = escompanys.getDatas();//获取符合条件的公司
+			long totalSize = escompanys.getTotalSize();
+			//查看雇员对应的公司信息
+			for(int i = 0;  i < employeeList.size(); i ++) {
+				Employee employee = employeeList.get(i);
+				List<Company> companies = ResultUtil.getInnerHits(employee.getInnerHits(), "company");
+				System.out.println(companies.size());
+			}
+		}
+		finally{
+			ESInnerHitSerialThreadLocal.clean();//清空inner 查询雇员类型
+		}
+
+
+	}
+
+	/**
+	 * 检索公司信息，并返回公司对应的雇员信息
+	 */
+	public void hasChildSearchReturnParent2ndChildren(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("name","Alice Smith");
+
+		try {
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Employee.class);//指定inner 查询雇员类型
+			ESDatas<Company> escompanys = clientUtil.searchList("company/company/_search","hasChildSearchReturnParent2ndChildren",params,Company.class);
+			long totalSize = escompanys.getTotalSize();
+			List<Company> companyList = escompanys.getDatas();//获取符合条件的公司
+			//查看雇员信息
+			for (int i = 0; i < companyList.size(); i++) {
+				Company company = companyList.get(i);
+				List<Employee> employees = ResultUtil.getInnerHits(company.getInnerHits(), "employee");
+				System.out.println(employees.size());
+			}
+
+		}
+		finally{
+			ESInnerHitSerialThreadLocal.clean();//清空inner 查询雇员类型
+		}
+
 
 	}
 	@Test
@@ -204,6 +272,9 @@ public class ParentChildTest {
 		this.hasChildSearchByName();
 		this.hasChildSearchByMinChild();
 		this.hasParentSearchByCountry();
+
+		this.hasChildSearchReturnParent2ndChildren();
+		this.hasParentSearchByCountryReturnParent2ndChildren();
 	}
 
 }
