@@ -198,7 +198,31 @@ public class ParentChildTest {
 		long totalSize = escompanys.getTotalSize();
 
 	}
+	/**
+	 * 检索公司信息，并返回公司对应的雇员信息（符合检索条件的雇员信息）
+	 */
+	public void hasChildSearchReturnParent2ndChildren(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("name","Alice Smith");
 
+		try {
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Employee.class);//指定inner查询结果对于雇员类型
+			ESDatas<Company> escompanys = clientUtil.searchList("company/company/_search",
+													"hasChildSearchReturnParent2ndChildren",params,Company.class);
+			long totalSize = escompanys.getTotalSize();
+			List<Company> companyList = escompanys.getDatas();//获取符合条件的公司
+			//查看公司下面的雇员信息（符合检索条件的雇员信息）
+			for (int i = 0; i < companyList.size(); i++) {
+				Company company = companyList.get(i);
+				List<Employee> employees = ResultUtil.getInnerHits(company.getInnerHits(), "employee");
+				System.out.println(employees.size());
+			}
+		}
+		finally{
+			ESInnerHitSerialThreadLocal.clean();//清空inner查询结果对于雇员类型
+		}
+	}
 	/**
 	 * 通过公司所在国家检索雇员信息,并返回雇员对应的公司信息
 	 */
@@ -209,11 +233,12 @@ public class ParentChildTest {
 		params.put("country","UK");
 
 		try {
-			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Company.class);//指定inner 查询雇员类型
-			ESDatas<Employee> escompanys = clientUtil.searchList("company/employee/_search","hasParentSearchByCountryReturnParent2ndChildren",params,Employee.class);
-			List<Employee> employeeList = escompanys.getDatas();//获取符合条件的公司
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Company.class);//指定inner查询结果对于公司类型
+			ESDatas<Employee> escompanys = clientUtil.searchList("company/employee/_search",
+													"hasParentSearchByCountryReturnParent2ndChildren",params,Employee.class);
+			List<Employee> employeeList = escompanys.getDatas();//获取符合条件的雇员数据
 			long totalSize = escompanys.getTotalSize();
-			//查看雇员对应的公司信息
+			//查看每个雇员对应的公司信息
 			for(int i = 0;  i < employeeList.size(); i ++) {
 				Employee employee = employeeList.get(i);
 				List<Company> companies = ResultUtil.getInnerHits(employee.getInnerHits(), "company");
@@ -221,39 +246,11 @@ public class ParentChildTest {
 			}
 		}
 		finally{
-			ESInnerHitSerialThreadLocal.clean();//清空inner 查询雇员类型
+			ESInnerHitSerialThreadLocal.clean();//清空inner查询结果对于公司类型
 		}
-
-
 	}
 
-	/**
-	 * 检索公司信息，并返回公司对应的雇员信息
-	 */
-	public void hasChildSearchReturnParent2ndChildren(){
-		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/indexparentchild.xml");
-		Map<String,Object> params = new HashMap<String,Object>();
-		params.put("name","Alice Smith");
 
-		try {
-			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Employee.class);//指定inner 查询雇员类型
-			ESDatas<Company> escompanys = clientUtil.searchList("company/company/_search","hasChildSearchReturnParent2ndChildren",params,Company.class);
-			long totalSize = escompanys.getTotalSize();
-			List<Company> companyList = escompanys.getDatas();//获取符合条件的公司
-			//查看雇员信息
-			for (int i = 0; i < companyList.size(); i++) {
-				Company company = companyList.get(i);
-				List<Employee> employees = ResultUtil.getInnerHits(company.getInnerHits(), "employee");
-				System.out.println(employees.size());
-			}
-
-		}
-		finally{
-			ESInnerHitSerialThreadLocal.clean();//清空inner 查询雇员类型
-		}
-
-
-	}
 	@Test
 	public void testFromBeans(){
 		createIndice();

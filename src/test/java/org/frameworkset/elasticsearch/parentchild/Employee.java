@@ -23,15 +23,22 @@ import org.frameworkset.elasticsearch.entity.ESBaseData;
 import java.util.Date;
 
 public class Employee extends ESBaseData {
+	/**
+	 * 通过ESId注解将employeeId指定为雇员的文档_id
+	 */
+	@ESId
+	private int employeeId;
+	/**
+	 * 通过ESParentId注解将companyId指定为雇员的parent属性，对应Company中的文档_id的值
+	 */
+	@ESParentId
+	private String companyId;
 	private String name;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	@Column(dataformat = "yyyy-MM-dd")
 	private Date birthday;
 	private String hobby;
-	@ESId
-	private int employeeId;
-	@ESParentId
-	private String companyId;
+
 
 	public String getName() {
 		return name;

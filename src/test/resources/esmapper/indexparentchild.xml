@@ -188,7 +188,7 @@
         ]]>
     </property>
 
-    <!--检索员工信息-->
+    <!--根据公司所在国家信息，检索员工信息-->
     <property name="hasParentSearchByCountry">
         <![CDATA[
             {
@@ -206,7 +206,7 @@
         ]]>
     </property>
 
-    <!--检索员工信息-->
+    <!--检索员工信息，同时返回员工所属的公司信息-->
     <property name="hasParentSearchByCountryReturnParent2ndChildren">
         <![CDATA[
             {
