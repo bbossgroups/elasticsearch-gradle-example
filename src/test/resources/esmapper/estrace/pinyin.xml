@@ -10,7 +10,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
 <properties>
     <property name="demoTemplate">
         <![CDATA[{
-            "template": "demo*",
+            "template": "demo-*",
             "settings": {
                 "number_of_shards": 6,
                 "index":{
