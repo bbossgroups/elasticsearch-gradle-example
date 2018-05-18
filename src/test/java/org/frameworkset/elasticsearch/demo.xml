@@ -9,7 +9,7 @@
                 "demo": {
                     "properties": {
                         "contentbody": {
-                            "type": "text",
+                            "type": "text"
 
                         },
                         "agentStarttime": {
