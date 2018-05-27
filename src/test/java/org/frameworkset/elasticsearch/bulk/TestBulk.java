@@ -91,8 +91,10 @@ public class TestBulk {
 		onlineGoodsInfoUpdateParams.setVersion(1);
 		onlineGoodsInfoUpdateParams.setVersionType(ClientInterface.VERSION_TYPE_INTERNAL);
 		onlineGoodsInfoUpdateParamss.add(onlineGoodsInfoUpdateParams);
+		System.out.println(clientUtil.getDynamicIndexName("test"));
 		String response = clientUtil.updateDocuments("aa","tt",onlineGoodsInfoUpdateParamss);
 		System.out.println(response);
+
 	}
 
 }

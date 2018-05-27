@@ -10,19 +10,9 @@ public class UpdateParams {
 
     @ESId(persistent = false)
     protected String id;
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
     @ESParentId
     protected String parentId;
-    protected String type;
-    protected String index;
+
     @ESVersion
     protected int version;
     @ESVersionType
@@ -36,6 +26,13 @@ public class UpdateParams {
     @ESSource
     protected boolean returnSource;
 
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
     public int getRetryOnConflict() {
         return retryOnConflict;
     }
@@ -43,7 +40,8 @@ public class UpdateParams {
     public void setRetryOnConflict(int retryOnConflict) {
         this.retryOnConflict = retryOnConflict;
     }
-
+    protected String type;
+    protected String index;
     public String getRouting() {
         return routing;
     }
