@@ -699,6 +699,23 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
     }]]></property>
     <property name="searchShopGoodUser"><![CDATA[{
       "size": 100,
+      "sort": [
+            {
+                "_geo_distance": { ##按离指定地理坐标对应的地理位置远近距离升序排序
+                    "unit": "km",
+                    "order": "asc",
+                    "location": { ##按离指定地理坐标
+                        "lon": #[lon],
+                        "lat": #[lat]
+                    }
+                }
+            },
+            {
+                "totalSaleNum": {
+                    "order": "desc"
+                }
+            }
+        ],
       "query": {
         "bool": {
           "must": [

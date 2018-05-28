@@ -9,6 +9,10 @@
 			f:maxHeaderCount = "${http.maxHeaderCount}"
 			f:maxTotal = "${http.maxTotal}"
 			f:defaultMaxPerRoute = "${http.defaultMaxPerRoute}"
+			  f:soKeepAlive="${http.soKeepAlive}"
+			  f:soReuseAddress="${http.soReuseAddress}"
+			  f:timeToLive="3600000"
+			  f:keepAlive="3600000"
 		class="org.frameworkset.spi.remote.http.ClientConfiguration">		      
 	</property>
 	
