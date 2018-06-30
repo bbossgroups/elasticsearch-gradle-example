@@ -16,8 +16,14 @@
 关键词联想和补全示例（term suggest，phrase suggest，complete suggest）
 
 # 使用参考文档
-bboss elasticsearch开发库使用介绍
+## 快速集成和应用 
+非spring boot项目：
+https://my.oschina.net/bboss/blog/1801273 
 
+spring boot项目：
+https://my.oschina.net/bboss/blog/1835601
+
+详细配置说明参考文档：
 https://my.oschina.net/bboss/blog/1556866
 
 # 构建部署
