@@ -5,8 +5,8 @@ import org.frameworkset.elasticsearch.client.ClientUtil;
 import org.frameworkset.elasticsearch.client.ResultUtil;
 import org.frameworkset.elasticsearch.entity.*;
 import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
+import org.frameworkset.elasticsearch.handler.ESMapResponseHandler;
 import org.frameworkset.elasticsearch.handler.ElasticSearchResponseHandler;
-import org.frameworkset.spi.remote.http.MapResponseHandler;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -268,8 +268,8 @@ public class TraceESDaoTest {
 	public void clusterMapState(){
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		//返回map类型集群状态信息
-		Map<String,Object> state = clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new MapResponseHandler());
-		clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new MapResponseHandler());
+		Map<String,Object> state = clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new ESMapResponseHandler());
+		clientUtil.executeHttp("_cluster/state",ClientInterface.HTTP_GET,new ESMapResponseHandler());
 		System.out.println(state);
 
 	}

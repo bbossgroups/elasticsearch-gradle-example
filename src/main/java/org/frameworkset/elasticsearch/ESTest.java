@@ -7,9 +7,9 @@ import org.frameworkset.elasticsearch.entity.Demo;
 import org.frameworkset.elasticsearch.entity.ESDatas;
 import org.frameworkset.elasticsearch.entity.JsonDataResult;
 import org.frameworkset.elasticsearch.entity.Traces;
+import org.frameworkset.elasticsearch.handler.ESMapResponseHandler;
+import org.frameworkset.elasticsearch.handler.ESStringResponseHandler;
 import org.frameworkset.spi.DefaultApplicationContext;
-import org.frameworkset.spi.remote.http.MapResponseHandler;
-import org.frameworkset.spi.remote.http.StringResponseHandler;
 import org.frameworkset.util.FastDateFormat;
 
 import java.text.DateFormat;
@@ -160,12 +160,12 @@ public class ESTest {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		traceExtraCriteria.setStartTime(dateFormat.parse("2017-09-02 00:00:00").getTime());
 		traceExtraCriteria.setEndTime(dateFormat.parse("2017-09-10 00:00:00").getTime());
-		 String data = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new StringResponseHandler());
+		 String data = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new ESStringResponseHandler());
 	        System.out.println("------------------------------");
 	        System.out.println(data);
 	        System.out.println("------------------------------");
 	        
-	        Map<String,Object> response = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new MapResponseHandler());
+	        Map<String,Object> response = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new ESMapResponseHandler());
 	        if(response.containsKey("error")){
 	            return ;
 	        }
@@ -180,12 +180,12 @@ public class ESTest {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		traceExtraCriteria.setStartTime(dateFormat.parse("2017-09-02 00:00:00").getTime());
 		traceExtraCriteria.setEndTime(dateFormat.parse("2017-09-10 00:00:00").getTime());
-		String data = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new StringResponseHandler());
+		String data = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new ESStringResponseHandler());
 		System.out.println("------------------------------");
 		System.out.println(data);
 		System.out.println("------------------------------");
 
-		Map<String,Object> response = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new MapResponseHandler());
+		Map<String,Object> response = clientUtil.executeRequest("trace-*/_search","queryPeriodsTopN",traceExtraCriteria,new ESMapResponseHandler());
 		if(response.containsKey("error")){
 			return ;
 		}
