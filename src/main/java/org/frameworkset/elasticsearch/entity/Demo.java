@@ -2,12 +2,12 @@ package org.frameworkset.elasticsearch.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.frameworkset.orm.annotation.Column;
-import com.frameworkset.orm.annotation.PrimaryKey;
+import com.frameworkset.orm.annotation.ESId;
 
 import java.util.Date;
 
 public class Demo extends ESBaseData{
-	@PrimaryKey
+	@ESId
 	private long demoId;
 	private String contentbody;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
