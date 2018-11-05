@@ -54,6 +54,10 @@ public class ParentChildTest {
 		clientUtil.executeHttp("company/company/_bulk?refresh","bulkImportCompanyData",ClientUtil.HTTP_POST);
 		//导入雇员数据,并且实时刷新，测试需要，实际环境不要带refresh
 		clientUtil.executeHttp("company/employee/_bulk?refresh","bulkImportEmployeeData",ClientUtil.HTTP_POST);
+		long companycount = clientUtil.countAll("company/company");
+		System.out.println(companycount);
+		long employeecount = clientUtil.countAll("company/employee");
+		System.out.println(employeecount);
 	}
 
 	private List<Company> buildCompanies(){
@@ -144,6 +148,7 @@ public class ParentChildTest {
 		//导入雇员数据,并且实时刷新，测试需要，实际环境不要带refresh
 		List<Employee> employees = buildEmployees();
 		clientUtil.addDocuments("company","employee",employees,"refresh");
+
 	}
 
 	/**
@@ -207,7 +212,8 @@ public class ParentChildTest {
 		params.put("name","Alice Smith");
 
 		try {
-			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Employee.class);//指定inner查询结果对于雇员类型
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences("employee",Employee.class);//指定inner查询结果对于雇员类型
+//			ESInnerHitSerialThreadLocal.setESInnerTypeReferences("othersontype",OtherSon.class);//指定inner查询结果对于雇员类型
 			ESDatas<Company> escompanys = clientUtil.searchList("company/company/_search",
 													"hasChildSearchReturnParent2ndChildren",params,Company.class);
 			long totalSize = escompanys.getTotalSize();
@@ -217,6 +223,80 @@ public class ParentChildTest {
 				Company company = companyList.get(i);
 				List<Employee> employees = ResultUtil.getInnerHits(company.getInnerHits(), "employee");
 				System.out.println(employees.size());
+//				List<OtherSon> otherSons = ResultUtil.getInnerHits(company.getInnerHits(), "othersontype");
+//				System.out.println(otherSons.size());
+			}
+		}
+		finally{
+			ESInnerHitSerialThreadLocal.clean();//清空inner查询结果对于雇员类型
+		}
+	}
+	public void createClientIndice(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/Client_Info.xml");
+		try {
+			//删除mapping
+			clientUtil.dropIndice("client_info");
+		} catch (ElasticSearchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//创建mapping
+		clientUtil.createIndiceMapping("client_info","createClientIndice");
+	}
+
+	/**
+	 * 通过读取配置文件中的dsl json数据导入雇员和公司数据
+	 */
+	public void importClientInfoFromJsonData(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/Client_Info.xml");
+
+
+		clientUtil.executeHttp("client_info/basic/_bulk?refresh","bulkImportBasicData",ClientUtil.HTTP_POST);
+		clientUtil.executeHttp("client_info/diagnosis/_bulk?refresh","bulkImportDiagnosisData",ClientUtil.HTTP_POST);
+		clientUtil.executeHttp("client_info/medical/_bulk?refresh","bulkImportMedicalData",ClientUtil.HTTP_POST);
+		clientUtil.executeHttp("client_info/exam/_bulk?refresh","bulkImportExamData",ClientUtil.HTTP_POST);
+		long companycount = clientUtil.countAll("client_info/basic");
+		System.out.println(companycount);
+		long basiccount = clientUtil.countAll("client_info/basic");
+		System.out.println(basiccount);
+		long medicalcount = clientUtil.countAll("client_info/medical");
+		System.out.println(medicalcount);
+		long examcount = clientUtil.countAll("client_info/exam");
+		System.out.println(examcount);
+		long diagnosiscount = clientUtil.countAll("client_info/diagnosis");
+		System.out.println(diagnosiscount);
+	}
+	/**
+	 * 查找顾客信息，演示多子文档父子数据查询功能
+	 */
+	public void hasParentSearchByCountryReturnParent2ndMultiChildren(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/Client_Info.xml");
+		Map<String,Object> params = new HashMap<String,Object>();//没有检索条件，构造一个空的参数对象
+//		params.put("name","Alice Smith");
+
+		try {
+			//设置子文档的类型和对象映射关系
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences("exam",Exam.class);//指定inner查询结果对于exam类型和对应的对象类型Exam
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences("diagnosis",Diagnosis.class);//指定inner查询结果对于diagnosis类型和对应的对象类型Diagnosis
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences("medical",Medical.class);//指定inner查询结果对于medical类型和对应的对象类型Medical
+			ESDatas<Basic> escompanys = clientUtil.searchList("client_info/_search",
+					"hasParentSearchByCountryReturnParent2ndMultiChildren",params,Basic.class);
+//			escompanys = clientUtil.searchAll("client_info",Basic.class);
+			long totalSize = escompanys.getTotalSize();
+			List<Basic> clientInfos = escompanys.getDatas();//获取符合条件的数据
+			//查看公司下面的雇员信息（符合检索条件的雇员信息）
+			for (int i = 0; clientInfos != null && i < clientInfos.size(); i++) {
+				Basic clientInfo = clientInfos.get(i);
+				List<Exam> exams = ResultUtil.getInnerHits(clientInfo.getInnerHits(), "exam");
+				if(exams != null)
+					System.out.println(exams.size());
+				List<Diagnosis> diagnosiss = ResultUtil.getInnerHits(clientInfo.getInnerHits(), "diagnosis");
+				if(diagnosiss != null)
+					System.out.println(diagnosiss.size());
+				List<Medical> medicals = ResultUtil.getInnerHits(clientInfo.getInnerHits(), "medical");
+				if(medicals != null)
+					System.out.println(medicals.size());
+
 			}
 		}
 		finally{
@@ -233,7 +313,7 @@ public class ParentChildTest {
 		params.put("country","UK");
 
 		try {
-			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Company.class);//指定inner查询结果对于公司类型
+			ESInnerHitSerialThreadLocal.setESInnerTypeReferences(Company.class);//指定inner查询结果对于公司类型,公司只有一个文档类型，索引不需要显示指定company类型信息
 			ESDatas<Employee> escompanys = clientUtil.searchList("company/employee/_search",
 													"hasParentSearchByCountryReturnParent2ndChildren",params,Employee.class);
 			List<Employee> employeeList = escompanys.getDatas();//获取符合条件的雇员数据
@@ -250,7 +330,12 @@ public class ParentChildTest {
 		}
 	}
 
-
+	@Test
+	public void testMutil(){
+		this.createClientIndice();
+		this.importClientInfoFromJsonData();
+		this.hasParentSearchByCountryReturnParent2ndMultiChildren();
+	}
 	@Test
 	public void testFromBeans(){
 		createIndice();

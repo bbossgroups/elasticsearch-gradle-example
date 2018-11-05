@@ -1,0 +1,101 @@
+<properties>
+    <!--
+        updateByquery
+        deleteByquery
+        dsl配置之文件
+    -->
+    <property name="updateByQuery">
+        <![CDATA[
+         {
+          "query": {
+            "has_child": {
+              "type":       "employee",
+              "score_mode": "max",
+              "query": {
+                "match": {
+                  "name": #[name]  ##查询包含员工名称的公司信息，并修改之
+                }
+              }
+            }
+          }
+        }
+        ]]>
+    </property>
+
+    <property name="updateStoreProductDynamicTemplate">
+        <![CDATA[
+        {
+          "query": {
+            "bool": {
+              "must": [
+                {
+                  "term": {
+                    "_id": #[id]
+                  }
+                }
+              ]
+            }
+          },
+          "script": {
+            "lang": "painless",
+            "source": @"""
+                ctx._source.is_expired_dynamic_price=params.is_expired_dynamic_price;
+                ctx._source.dynamic_price_template_id=params.dynamic_price_template_id;
+                ctx._source.dynamic_price_template.id=params.dynamic_price_template_id;
+                ctx._source.dynamic_price_template.code=params.dynamic_price_template_code;
+                ctx._source.dynamic_price_template.name=params.dynamic_price_template.name;
+                ctx._source.dynamic_price_template.count_products=params.dynamic_price_template.count_products;
+                ctx._source.dynamic_price_template.is_deleted=params.dynamic_price_template.is_deleted;
+                ctx._source.dynamic_price_template.user_id_update=params.dynamic_price_template.user_id_update;
+                ctx._source.dynamic_price_template.rules=params.ctx._source.dynamic_price_template.rules;
+                """,
+            "params": {
+              "is_expired_dynamic_price": #[isExpiredDynamicPrice],
+              "dynamic_price_template_id": #[dynamicPriceTemplateId],
+              "dynamic_price_template_code":#[dynamicPriceTemplate->code],
+              "dynamic_price_template.name":#[dynamicPriceTemplate->name],
+              "dynamic_price_template.count_products":#[dynamicPriceTemplate->countProducts],
+              "dynamic_price_template.is_deleted":#[dynamicPriceTemplate->isDeleted],
+              "dynamic_price_template.user_id_update":#[dynamicPriceTemplate->userIdUpdate],
+              "dynamic_price_template.rules":
+              [
+                   #foreach($rule in $dynamicPriceTemplate.rules)
+                       #if($velocityCount > 0),#end
+                   {
+                        "id": #[dynamicPriceTemplate->rules[$velocityCount]->id],
+                        "sort_num": #[dynamicPriceTemplate->rules[$velocityCount]->sortNum],
+                        "act_expired_time_tick": #[dynamicPriceTemplate->rules[$velocityCount]->actExpiredTimeTick],
+                        "act_expired_time_value": #[dynamicPriceTemplate->rules[$velocityCount]->actExpiredTimeValue],
+                        "act_expired_time_unit": #[dynamicPriceTemplate->rules[$velocityCount]->actExpiredTimeUnit],
+                        "price_new_type": #[dynamicPriceTemplate->rules[$velocityCount]->priceNewType],
+                        "price_new_coefficient": #[dynamicPriceTemplate->rules[$velocityCount]->priceNewCoefficient],
+                        "price_new_custom": #[dynamicPriceTemplate->rules[$velocityCount]->priceNewCustom],
+                        "auto_set_commend": #[dynamicPriceTemplate->rules[$velocityCount]->autoSetCommend],
+                        "auto_set_tag": #[dynamicPriceTemplate->rules[$velocityCount]->autoSetTag]
+                    }
+                   #end
+              ]
+            }
+          }
+        }
+        ]]>
+    </property>
+
+
+    <property name="deleteByQuery">
+        <![CDATA[
+         {
+              "query": {
+                "has_parent": {
+                  "type": "company",
+                  "query": {
+                    "match": {
+                      "country": #[country] ##查询对应国家所属公司的员工，并删除之
+                    }
+                  }
+                }
+              }
+         }
+        ]]>
+    </property>
+</properties>

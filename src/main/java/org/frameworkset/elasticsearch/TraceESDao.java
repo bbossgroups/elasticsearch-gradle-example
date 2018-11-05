@@ -1,22 +1,15 @@
 package org.frameworkset.elasticsearch;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.frameworkset.elasticsearch.client.ClientInterface;
-import org.frameworkset.elasticsearch.entity.ESAggDatas;
-import org.frameworkset.elasticsearch.entity.ESDatas;
-import org.frameworkset.elasticsearch.entity.JsonDataResult;
-import org.frameworkset.elasticsearch.entity.LongAggRangeHit;
-import org.frameworkset.elasticsearch.entity.RestResponse;
+import org.frameworkset.elasticsearch.entity.*;
 import org.frameworkset.elasticsearch.entity.TraceExtraCriteria;
-import org.frameworkset.elasticsearch.entity.TraceLongAggHit;
-import org.frameworkset.elasticsearch.entity.TraceScatter;
-import org.frameworkset.elasticsearch.entity.Traces;
 import org.frameworkset.elasticsearch.handler.ESAggBucketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 从Elastic Search里果询服务链路信息
@@ -86,8 +79,7 @@ public class TraceESDao {
         init();
 //        String datastr = clientUtil.executeRequest("trace-*/_search","queryTracesByCriteria",traceExtraCriteria);
         ESDatas<Traces> response = clientUtil.searchList("trace-*/_search","queryTracesByCriteria",traceExtraCriteria,Traces.class);
-        if(response == null)
-            return null;
+
         return response;
 
     }
@@ -99,8 +91,7 @@ public class TraceESDao {
 		
 		//o/r mapping api
 		ESDatas<TraceScatter> response = clientUtil.searchList("trace-*/_search","queryTracesByCriteria",traceExtraCriteria,TraceScatter.class);
-		if(response == null)
-			return null;
+
 		return response;
 
 	}
