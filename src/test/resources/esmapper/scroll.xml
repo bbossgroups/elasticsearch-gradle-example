@@ -25,10 +25,10 @@
         <![CDATA[
          {
            "slice": {
-                "id": $id,
-                "max": $max
+                "id": #[id],
+                "max": #[max]
             },
-            "size":$size,
+            "size":#[size],
             "query": {
                 "term" : {
                     "gc.jvmGcOldCount" : 3
