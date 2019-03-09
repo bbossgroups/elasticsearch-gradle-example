@@ -27,6 +27,27 @@ public class PingyinTest {
 
 		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
 		try {
+			//可以先删除索引mapping，重新初始化数据
+			clientUtil.dropIndice("demo");
+		} catch (ElasticSearchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+//
+		//创建索引表结构
+		String response = clientUtil.createIndiceMapping("demo","createDemoIndice");
+//       获取并打印创建的索引表结构
+		System.out.println(clientUtil.getIndice("demo"));
+
+	}
+
+	@Test
+	public void testCreateDemoMappingTemplate(){
+
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
+		try {
 			clientUtil.dropIndice("demo-*");
 		} catch (ElasticSearchException e) {
 			// TODO Auto-generated catch block
@@ -35,16 +56,16 @@ public class PingyinTest {
 		try {
 			String template = clientUtil.deleteTempate("demo_template");
 			System.out.println(template);
-	} catch (ElasticSearchException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+		} catch (ElasticSearchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 			String template = clientUtil.createTempate("demo_template", "demoTemplate");
 			System.out.println(template);
-} catch (ElasticSearchException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		} catch (ElasticSearchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 //			//获取索引表结构
 //			System.out.println(clientUtil.getIndice("demo"));
@@ -52,8 +73,8 @@ public class PingyinTest {
 //			System.out.println(clientUtil.dropIndice("demo"));
 
 //
-//		//创建索引表结构
-//		System.out.println(clientUtil.createIndiceMapping("demo","createDemoIndice"));
+		//创建索引表结构
+		System.out.println(clientUtil.createIndiceMapping("demo","createDemoIndice"));
 //
 //		System.out.println(clientUtil.getIndice("demo"));
 //
@@ -62,10 +83,9 @@ public class PingyinTest {
 //		System.out.println(clientUtil.getIndice("demo"));
 	}
 	@Test
-	public void testBulkAddDateDocument() throws ParseException {
+	public void testBulkAddDocuments() throws ParseException {
 //		testCreateDemoMapping();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
-		String date = format.format(new Date());
+
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		List<Demo> demos = new ArrayList<>();
 		Demo demo = new Demo();
@@ -85,23 +105,34 @@ public class PingyinTest {
 		demos.add(demo);
 
 		//创建模板
-		String response = clientUtil.addDateDocuments("demo",//索引表
+		String response = clientUtil.addDocuments("demo",//索引表
 				"demo",//索引类型
 				demos);
 
-		System.out.println("addDateDocument-------------------------");
+		System.out.println("addDocuments-------------------------");
 		System.out.println(response);
 
-		response = clientUtil.getDocument("demo-"+date,//索引表
+		//验证创建的两条索引记录
+		response = clientUtil.getDocument("demo",//索引表
 				"demo",//索引类型
 				"2");
 		System.out.println("getDocument-------------------------");
 		System.out.println(response);
 
-		demo = clientUtil.getDocument("demo-"+date,//索引表
+		demo = clientUtil.getDocument("demo",//索引表
 				"demo",//索引类型
 				"3",//创建文档对应的脚本名称，在esmapper/estrace/ESTracesMapper.xml中配置
 				Demo.class);
+	}
+
+	@Test
+	public void searchPinyinDemo(){
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/pinyin.xml");
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("name","zhang学友");//设置中文拼音混合检索条件
+ 		ESDatas<Map> esDatas = clientUtil.searchList("demo/_search","searchPinyinDemo",params,Map.class);
+ 		List<Map> datas = esDatas.getDatas();
+ 		long totalSize = esDatas.getTotalSize();
 	}
 
 

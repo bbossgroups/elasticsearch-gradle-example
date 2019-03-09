@@ -131,7 +131,7 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
                             }
                         },
                         "name": {
-                            "type": "keyword",
+                            "type": "text",
                             "fields": {
                                 "pinyin": {
                                     "type": "text",
@@ -651,7 +651,24 @@ https://github.com/medcl/elasticsearch-analysis-pinyin
         }
     }]]></property>
 
+    <property name="searchPinyinDemo"><![CDATA[{
+        "size": 100,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                          "match_phrase_prefix" : {
+                                "name" : {
+                                    "query" : #[name],
+                                    "max_expansions" : 10
+                                }
+                            }
 
+                    }
+                ]
+            }
+        }
+    }]]></property>
     <property name="searchPinyinmatch_phrase_prefix"><![CDATA[{
         "size": 100,
         "query": {
