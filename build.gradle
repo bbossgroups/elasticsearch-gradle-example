@@ -97,7 +97,7 @@ configure(allprojects) { project ->
 				srcDir 'src/main/resources'
 				srcDir 'src/main/java'  exclude '**/*.java'
 			}
-			compileClasspath = configurations.compile + configurations.runtime
+//			compileClasspath = configurations.compile + configurations.runtime
 		}
 		test {
 			java {
@@ -133,7 +133,7 @@ configure(allprojects) { project ->
 				//[group: 'org.elasticsearch.plugin.jdbc', name: 'jdbc', version: "6.3.0", transitive: true]
 		)
 
-		runtime(
+		compile(
 				[group: 'com.bbossgroups', name: 'bboss-rt', version: "${bboss_version}", transitive: false],
 		)
 	}
@@ -150,7 +150,8 @@ configure(allprojects) { project ->
 
 	task copyRTJarFiles(type: Copy,dependsOn:'copyJarFiles'){
 		
-		 from configurations.runtime - configurations.compile
+		 from configurations.compile
+		 include { details -> details.file.name.startsWith('bboss-rt')  }
 		 into 'build/dist'
 	     rename ("bboss-rt-${bboss_version}.jar", "${project.name}-${bboss_version}.jar")
 	}
