@@ -1,13 +1,13 @@
 package org.frameworkset.elasticsearch;
 
+import org.frameworkset.elasticsearch.client.ESAddress;
+import org.frameworkset.elasticsearch.client.ElasticSearchRestClient;
+import org.frameworkset.elasticsearch.client.HealthCheck;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.frameworkset.elasticsearch.client.ESAddress;
-import org.frameworkset.elasticsearch.client.ElasticSearchRestClient;
-import org.frameworkset.elasticsearch.client.HealthCheck;
 
 public class HealthCheckTest {
 	
@@ -19,7 +19,7 @@ public class HealthCheckTest {
 		String elasticUser = "elastic", elasticPassword = "changeme";
 		Map<String,String> headers = new HashMap<>();
 		headers.put("Authorization", ElasticSearchRestClient.getHeader(elasticUser, elasticPassword));
-		final HealthCheck healthCheck = new HealthCheck(esAddresses,5000, headers);
+		final HealthCheck healthCheck = new HealthCheck("default",esAddresses,5000, headers);
 		healthCheck.run();
 		
 		Thread r = new Thread(new Runnable(){
