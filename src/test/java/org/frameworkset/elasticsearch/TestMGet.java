@@ -16,7 +16,6 @@ package org.frameworkset.elasticsearch;/*
 
 import org.frameworkset.elasticsearch.client.ClientInterface;
 import org.frameworkset.elasticsearch.client.ClientUtil;
-import org.frameworkset.elasticsearch.serial.SerialUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -63,15 +62,15 @@ public class TestMGet {
 	}
 
 
-	private void ser(Object... ids){
-		System.out.println(SerialUtil.object2json(ids));
-	}
-
-	@Test
-	public void testSon(){
-		ser("1","2");
-		ser("1");
-		ser(1,3);
-		ser(new Integer[]{new Integer(1),new Integer(3)});
-	}
+//	private void ser(Object... ids){
+//		System.out.println(SerialUtil.object2json(ids));
+//	}
+//
+//	@Test
+//	public void testSon(){
+//		ser("1","2");
+//		ser("1");
+//		ser(1,3);
+//		ser(new Integer[]{new Integer(1),new Integer(3)});
+//	}
 }
