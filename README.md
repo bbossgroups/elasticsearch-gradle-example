@@ -42,7 +42,8 @@ https://github.com/bbossgroups/elasticsearchdemo
 ## 通过gradle构建发布版本
 前提：安装gradle
 
-gradle clean releaseVersion
+运行指令，打包发布版本
+release.bat
 
 ## 运行
 gradle构建成功后，在build/distributions目录下会生成可以运行的zip包，解压后，参考《bboss elasticsearch开发库使用介绍》修改elasticsearch的相关配置，然后找到demo的运行指令，就可以启动和运行demo：
