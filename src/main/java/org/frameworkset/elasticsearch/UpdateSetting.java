@@ -35,7 +35,11 @@ public class UpdateSetting {
 		int max_result_window = CommonLauncher.getIntProperty("max_result_window",15000);
 		Map<String,Object> settings = new HashMap<String,Object>();
 		settings.put("index.max_result_window",max_result_window);
-		String result = clientInterface.updateAllIndicesSettings(settings);
+		String result = clientInterface.updateAllIndicesSettings(settings);//修改所有索引的max_result_window设置
+
+		System.out.println(result);
+
+		result = clientInterface.updateIndiceSettings("dbdemo",settings) ;//修改索引dbdemo的max_result_window设置
 		System.out.println(result);
 		String setting = clientInterface.getClusterSettings();
 		System.out.println(setting);
