@@ -1,8 +1,8 @@
 package org.frameworkset.elasticsearch;
 
 import org.frameworkset.elasticsearch.client.ESAddress;
-import org.frameworkset.elasticsearch.client.ElasticSearchRestClient;
 import org.frameworkset.elasticsearch.client.HealthCheck;
+import org.frameworkset.spi.remote.http.ClientConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,7 @@ public class HealthCheckTest {
 //		esAddresses.add(new ESAddress("localhost3:9200"));
 		String elasticUser = "elastic", elasticPassword = "changeme";
 		Map<String,String> headers = new HashMap<>();
-		headers.put("Authorization", ElasticSearchRestClient.getHeader(elasticUser, elasticPassword));
-		final HealthCheck healthCheck = new HealthCheck("default",esAddresses,5000, headers);
+		final HealthCheck healthCheck = new HealthCheck("default", ClientConfiguration.getHealthPoolName("default"),esAddresses,5000);
 		healthCheck.run();
 		
 		Thread r = new Thread(new Runnable(){
