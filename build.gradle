@@ -130,7 +130,7 @@ configure(allprojects) { project ->
 	    compile.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
 	}
 	dependencies {
-		testCompile 'junit:junit:4.12'
+		testCompile 'junit:junit:4.13.1'
 		//采用log4j2记录日志
 		compile(
 				[group: 'com.bbossgroups', name: 'bboss-persistent', version: "${bboss_version}", transitive: true],
