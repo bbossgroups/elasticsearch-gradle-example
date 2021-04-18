@@ -12,7 +12,7 @@ configure(allprojects) { project ->
 	apply plugin: "eclipse"
 	apply plugin: "idea"
 	apply plugin: "signing"
-	apply plugin: "maven"
+	apply plugin: "java-library"
 	eclipse {
 		jdt {
 			//if you want to alter the java versions (by default they are configured with gradle java plugin settings):
@@ -42,16 +42,19 @@ configure(allprojects) { project ->
 	}
 
 	task sourcesJar(type: Jar) {
-		classifier = "sources"
-		from sourceSets.main.allJava
+	   archiveClassifier = "sources"
+	   from sourceSets.main.allJava
+	   duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	}
-
+	processResources {
+	   duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
 	task javaDocJar(type: Jar, dependsOn: javadoc) {
-		classifier = "javadoc"
-		from javadoc.destinationDir
+	   archiveClassifier = "javadoc"
+	   from javadoc.destinationDir
 	}
 	artifacts {
-		archives sourcesJar, javaDocJar
+	   archives sourcesJar, javaDocJar
 	}
 
 	jar {
@@ -73,11 +76,9 @@ configure(allprojects) { project ->
 	repositories {
 		mavenLocal()
 		 maven {
-	        url "http://maven.aliyun.com/nexus/content/groups/public"
+	        url "https://maven.aliyun.com/nexus/content/groups/public"
 	    }
-		 maven {
-	        url "https://artifacts.elastic.co/maven"
-	    } 
+
 		mavenCentral()
 
 	}
@@ -127,24 +128,24 @@ configure(allprojects) { project ->
 
 	configurations {
 		//屏蔽log4j
-	    compile.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+	    api.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
 	}
 	dependencies {
-		testCompile 'junit:junit:4.13.1'
+		testImplementation 'junit:junit:4.13.1'
 		//采用log4j2记录日志
-		compile(
+		api(
 				[group: 'com.bbossgroups', name: 'bboss-persistent', version: "${bboss_version}", transitive: true],
 //			[group: 'org.apache.logging.log4j', name: 'log4j-api', version: "${log4j2_version}", transitive: false],
 	        [group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4j2_version}", transitive: true],
 			[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "${log4j2_version}", transitive: true],
 //				[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "${log4j2_version}", transitive: true]
 		)
-		compile(
+		api(
 				[group: 'com.bbossgroups.plugins', name: 'bboss-elasticsearch-rest-jdbc', version: "${bboss_es_version}", transitive: true],
 				//[group: 'org.elasticsearch.plugin.jdbc', name: 'jdbc', version: "6.3.0", transitive: true]
 		)
 
-		compile(
+		api(
 				[group: 'com.bbossgroups', name: 'bboss-rt', version: "${bboss_version}", transitive: false],
 		)
 	}
@@ -152,7 +153,10 @@ configure(allprojects) { project ->
 
 
 	task copyJarFiles(type: Sync,dependsOn:'jar'){		
-		from configurations.compile
+		from configurations.api{
+		 canBeResolved=true
+
+		}
 		from jar.outputs
 		exclude { details -> details.file.name.startsWith('bboss-rt')  }
 		into 'build/dist/lib'
@@ -161,7 +165,10 @@ configure(allprojects) { project ->
 
 	task copyRTJarFiles(type: Copy,dependsOn:'copyJarFiles'){
 		
-		 from configurations.compile
+		 from configurations.api{
+			 canBeResolved=true
+
+			}
 		 include { details -> details.file.name.startsWith('bboss-rt')  }
 		 into 'build/dist'
 	     rename ("bboss-rt-${bboss_version}.jar", "${project.name}-${bboss_version}.jar")
@@ -191,7 +198,7 @@ configure(allprojects) { project ->
 	task releaseVersion(type: Zip,dependsOn:['copyToolFiles','copyResourcesfiles']) {
 
 		//appendix = 'wrapper'
-		classifier = 'released'
+		archiveClassifier = 'released'
 		from 'build/dist/'
 
 	}
