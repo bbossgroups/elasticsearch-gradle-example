@@ -346,7 +346,7 @@ public class PingyinTest {
 	public void importPboosMapDatas() throws IOException {
 
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
-		File maps = new File("F:\\4_ASIA文档\\1_项目\\13_江西移动\\拼音搜索\\maps");
+		File maps = new File("F:\\拼音搜索\\maps");
 		File[] mapFiles = maps.listFiles();
 		 List<Future> fs = new ArrayList<>();
 		for(File mapFile:mapFiles){
@@ -388,14 +388,14 @@ public class PingyinTest {
 	public void importShopGood() throws IOException {
 
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
-		String data = FileUtil.getFileContent("F:\\4_ASIA文档\\1_项目\\13_江西移动\\拼音搜索\\数据\\shops","UTF-8");
+		String data = FileUtil.getFileContent("拼音搜索\\数据\\shops","UTF-8");
 		long time = System.currentTimeMillis();
 
 		String temp = clientUtil.executeHttp("_bulk",data, ClientUtil.HTTP_POST);
 		System.out.println(temp);
 		System.out.println("耗时："+(System.currentTimeMillis() - time)+"毫秒");
 
-		data = FileUtil.getFileContent("F:\\4_ASIA文档\\1_项目\\13_江西移动\\拼音搜索\\数据\\good","UTF-8");
+		data = FileUtil.getFileContent("拼音搜索\\数据\\good","UTF-8");
 		time = System.currentTimeMillis();
 
 		temp = clientUtil.executeHttp("_bulk",data, ClientUtil.HTTP_POST);
@@ -411,7 +411,7 @@ public class PingyinTest {
 	}
 	@Test
 	public void importPboosMapData() throws IOException {
-		String data = FileUtil.getFileContent("F:\\4_ASIA文档\\1_项目\\13_江西移动\\拼音搜索\\maps\\maps_0","UTF-8");
+		String data = FileUtil.getFileContent("拼音搜索\\maps\\maps_0","UTF-8");
 
 	    long time = System.currentTimeMillis();
 
