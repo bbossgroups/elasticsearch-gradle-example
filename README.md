@@ -51,7 +51,7 @@ gradle构建成功后，在build/distributions目录下会生成可以运行的z
 
 打开配置文件conf/elasticsearch.properties，修改es地址，es账号和口令：
 
-elasticsearch.rest.hostNames=127.0.0.1:9200
+elasticsearch.rest.hostNames=127.0.1.1:9200
 
 如果启动了elasticsearch认证，修改es账号和口令：
 
