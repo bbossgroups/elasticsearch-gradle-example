@@ -402,7 +402,7 @@ public class PingyinTest {
 		System.out.println(temp);
 		System.out.println("耗时："+(System.currentTimeMillis() - time)+"毫秒");
 
-		data = FileUtil.getFileContent("F:\\4_ASIA文档\\1_项目\\13_江西移动\\拼音搜索\\数据\\orders","UTF-8");
+		data = FileUtil.getFileContent("数据\\orders","UTF-8");
 		time = System.currentTimeMillis();
 
 		temp = clientUtil.executeHttp("_bulk",data, ClientUtil.HTTP_POST);
