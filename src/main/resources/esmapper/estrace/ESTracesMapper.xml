@@ -304,7 +304,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
                             #else
                                 "fields":[
                                 #foreach($field in $searchFields)
-                                      #if($velocityCount > 0),#end "$field"
+                                      #if($foreach.index > 0),#end "$field"
                                 #end
                                 ]
                             #end
@@ -386,7 +386,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-range-quer
                                 {"term": {"remoteAddr.keyword": "$queryCondition"}}
                             #else
                                 #foreach($field in $searchFields)
-                                      #if($velocityCount > 0),#end {"term": {"${field}.keyword": "$queryCondition"}}
+                                      #if($foreach.index > 0),#end {"term": {"${field}.keyword": "$queryCondition"}}
                                 #end
                             #end
                         ]

@@ -13,8 +13,8 @@
     <property name="updateOnlineGoodsesInfo">
         <![CDATA[
         #foreach($onlineGoodsInfoUpdateParams in $onlineGoodsInfoUpdateParamss)
-            { "update" : {"_id" : #[onlineGoodsInfoUpdateParamss[$velocityCount]->id], "_type" : #[onlineGoodsInfoUpdateParamss[$velocityCount]->type], "_index" : #[onlineGoodsInfoUpdateParamss[$velocityCount]->index], "_version" : #[onlineGoodsInfoUpdateParamss[$velocityCount]->version], "_version_type" : #[onlineGoodsInfoUpdateParamss[$velocityCount]->versionType]} }
-            { "doc" : {"goodsName":#[onlineGoodsInfoUpdateParamss[$velocityCount]->goodsName]}}
+            { "update" : {"_id" : #[onlineGoodsInfoUpdateParamss[$foreach.index]->id], "_type" : #[onlineGoodsInfoUpdateParamss[$foreach.index]->type], "_index" : #[onlineGoodsInfoUpdateParamss[$foreach.index]->index], "_version" : #[onlineGoodsInfoUpdateParamss[$foreach.index]->version], "_version_type" : #[onlineGoodsInfoUpdateParamss[$foreach.index]->versionType]} }
+            { "doc" : {"goodsName":#[onlineGoodsInfoUpdateParamss[$foreach.index]->goodsName]}}
         #end
         ]]>
     </property>
