@@ -41,15 +41,16 @@ https://github.com/bbossgroups/elasticsearchdemo
 
 ## 通过gradle构建发布版本
 前提：安装gradle
+### 修改配置：
+一、设置mainclass，设置为要运行的带Main方法的运行类
+打开配置文件application.properties，修改mainclass配置：
 
-运行指令，打包发布版本
-release.bat
+mainclass=org.frameworkset.elasticsearch.TestKerberos
 
-## 运行
-gradle构建成功后，在build/distributions目录下会生成可以运行的zip包，解压后，参考《bboss elasticsearch开发库使用介绍》修改elasticsearch的相关配置，然后找到demo的运行指令，就可以启动和运行demo：
+二、设置Elasticsearch地址和认证信息
+参考[《bboss elasticsearch开发库使用介绍》](https://esdoc.bbossgroups.com/#/development)修改elasticsearch的相关配置，
 
-
-打开配置文件conf/elasticsearch.properties，修改es地址，es账号和口令：
+打开配置文件application.properties，修改es地址，es账号和口令：
 
 elasticsearch.rest.hostNames=127.0.1.1:9200
 
@@ -58,6 +59,27 @@ elasticsearch.rest.hostNames=127.0.1.1:9200
 elasticUser=elastic
 
 elasticPassword=changeme
+
+三、打包
+运行指令，打包发布版本
+release.bat
+
+四、 运行
+打包成功后，在build/distributions目录下会生成可以运行的zip包，解压后，找到demo的运行指令，就可以启动和运行demo。
+
+修改JVM参数：打开jvm.options文件，可以设置jvm相关参数
+
+调整内存：
+
+```properties
+-Xms1g
+-Xmx1g
+
+-XX:NewSize=512m
+-XX:MaxNewSize=512m
+-Xss256k
+```
+
 
 运行demo
 
