@@ -40,9 +40,10 @@ https://esdoc.bbossgroups.com/#/development
 https://github.com/bbossgroups/elasticsearchdemo
 
 ## 通过gradle构建发布版本
-前提：安装gradle
+前提：[安装和配置gradle](https://esdoc.bbossgroups.com/#/bboss-build)
 ### 修改配置：
 一、设置mainclass，设置为要运行的带Main方法的运行类
+
 打开配置文件application.properties，修改mainclass配置：
 
 mainclass=org.frameworkset.elasticsearch.TestKerberos
