@@ -16,6 +16,8 @@ package org.frameworkset.elasticsearch;
  */
 
 import org.frameworkset.elasticsearch.client.ClientInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Description: </p>
@@ -25,12 +27,21 @@ import org.frameworkset.elasticsearch.client.ClientInterface;
  * @Date 2025/2/13
  */
 public class TestKerberos {
+    private static final Logger logger = LoggerFactory.getLogger(TestKerberos.class);
     public static void main(String[] args){
         ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
         //获取ES版本信息
         String result = clientUtil.executeHttp("/?pretty", ClientInterface.HTTP_GET);
-        System.out.println(result);
-        System.out.println(clientUtil.getClusterSettings());
+        logger.info(result);
+        logger.info(clientUtil.getClusterSettings());
+        do{
+            result = clientUtil.executeHttp("/?pretty", ClientInterface.HTTP_GET);
+            try {
+                Thread.sleep(3000L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }while (true);
 
 
     }
