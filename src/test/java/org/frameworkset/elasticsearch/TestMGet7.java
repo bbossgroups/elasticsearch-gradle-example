@@ -22,17 +22,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
- * Elasticsearch 6及以下版本案例
+ * Elasticsearch 7+案例
  */
-public class TestMGet {
+public class TestMGet7 {
 	@Test
 	public void testMgetWithDSL(){
-		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/mget.xml");
+		ClientInterface clientUtil = ElasticSearchHelper.getConfigRestClientUtil("esmapper/estrace/mget7.xml");
 		//通过执行dsl获取多个文档的内容
 		List<String> ids = new ArrayList<String>();
-		ids.add("10.21.20.168");
-		ids.add("192.168.0.143");
+		ids.add("TT5A8JQBcIsteX3sNfdw");
+		ids.add("TD5A8JQBcIsteX3sNfdw");
 		Map params = new HashMap();
 		params.put("ids",ids);
 		String response = clientUtil.executeHttp("_mget",
@@ -51,15 +52,16 @@ public class TestMGet {
 	public void testMget(){
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		//获取json报文
-		String response = clientUtil.mgetDocumentsStringWithIds("agentinfo",//索引表
-				                                   "agentinfo",//索引表类型
-				                                   "10.21.20.168","192.168.0.143");//文档id清单，如果是数字类型，请用Integer之类的封装对象
+
+        String response  = clientUtil.mgetDocumentsNew("dbdemo",//索引表
+                "TT5A8JQBcIsteX3sNfdw","TD5A8JQBcIsteX3sNfdw");//文档id清单，如果是数字类型，请用Integer之类的封装对象
 		System.out.println(response);
 		//获取封装成对象的文档列表，此处是Map对象，还可以是其他用户定义的对象类型
-		List<Map> docs = clientUtil.mgetDocumentsWithIds("agentinfo",//索引表
-					                              "agentinfo",//索引表类型
-				                                   Map.class,//返回文档对象类型
-				                                   "10.21.20.168","192.168.0.143");//文档id清单
+
+
+        List<Map> docs = clientUtil.mgetDocuments("dbdemo",//索引表
+                Map.class,//返回文档对象类型
+                "TT5A8JQBcIsteX3sNfdw","TD5A8JQBcIsteX3sNfdw");//文档id清单
 		System.out.println(docs);
 	}
 

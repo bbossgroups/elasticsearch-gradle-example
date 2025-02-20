@@ -24,8 +24,7 @@ GET /_mget
                 #foreach($id in $ids)
                     #if($foreach.index > 0),#end
                     {
-                        "_index" : "agentinfo",
-                        "_type" : "agentinfo",
+                        "_index" : "dbdemo",
                         "_id" : "$id"
                     }
                 #end
