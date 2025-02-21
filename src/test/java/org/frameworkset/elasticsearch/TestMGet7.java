@@ -53,15 +53,15 @@ public class TestMGet7 {
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		//获取json报文
 
-        String response  = clientUtil.mgetDocumentsNew("dbdemo",//索引表
-                "TT5A8JQBcIsteX3sNfdw","TD5A8JQBcIsteX3sNfdw");//文档id清单，如果是数字类型，请用Integer之类的封装对象
+        String response  = clientUtil.mgetDocuments("dbdemo",//索引表
+                new String[]{"TT5A8JQBcIsteX3sNfdw","TD5A8JQBcIsteX3sNfdw"});//文档id清单，如果是数字类型，请用Integer之类的封装对象
 		System.out.println(response);
 		//获取封装成对象的文档列表，此处是Map对象，还可以是其他用户定义的对象类型
 
 
         List<Map> docs = clientUtil.mgetDocuments("dbdemo",//索引表
                 Map.class,//返回文档对象类型
-                "TT5A8JQBcIsteX3sNfdw","TD5A8JQBcIsteX3sNfdw");//文档id清单
+                new String[]{"TT5A8JQBcIsteX3sNfdw","TD5A8JQBcIsteX3sNfdw"});//文档id清单
 		System.out.println(docs);
 	}
 

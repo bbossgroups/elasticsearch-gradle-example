@@ -51,15 +51,15 @@ public class TestMGet {
 	public void testMget(){
 		ClientInterface clientUtil = ElasticSearchHelper.getRestClientUtil();
 		//获取json报文
-		String response = clientUtil.mgetDocumentsStringWithIds("agentinfo",//索引表
+		String response = clientUtil.mgetDocuments("agentinfo",//索引表
 				                                   "agentinfo",//索引表类型
-				                                   "10.21.20.168","192.168.0.143");//文档id清单，如果是数字类型，请用Integer之类的封装对象
+				                                   new String[]{"10.21.20.168","192.168.0.143"});//文档id清单，如果是数字类型，请用Integer之类的封装对象
 		System.out.println(response);
 		//获取封装成对象的文档列表，此处是Map对象，还可以是其他用户定义的对象类型
-		List<Map> docs = clientUtil.mgetDocumentsWithIds("agentinfo",//索引表
+		List<Map> docs = clientUtil.mgetDocuments("agentinfo",//索引表
 					                              "agentinfo",//索引表类型
 				                                   Map.class,//返回文档对象类型
-				                                   "10.21.20.168","192.168.0.143");//文档id清单
+                new String[]{"10.21.20.168","192.168.0.143"});//文档id清单
 		System.out.println(docs);
 	}
 
